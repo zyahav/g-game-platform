@@ -36,6 +36,10 @@
 - Added reusable checkpoints that save coin/score progress and restore it after game over
 - Expanded `GUT` coverage for checkpoint activation, checkpoint restore, and fresh restart after win
 - Current `GUT` suite now passes: 15 tests, 63 assertions
+- Added gameplay invariants documenting that checkpoint respawn must restore a safe playable state
+- Implemented validated safe checkpoint respawn instead of restoring raw checkpoint coordinates
+- Added automated checkpoint death-loop prevention coverage that waits under gravity after respawn
+- Confirmed `make verify` now passes with the safe-respawn checkpoint flow: 16 tests, 68 assertions
 
 ## Handoff Note
 

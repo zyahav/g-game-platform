@@ -15,7 +15,7 @@ The game currently has:
 - HUD with score and coin count
 - Reusable coin scene and coin collection
 - Reusable spike hazard scene and hazard-triggered lose flow
-- Reusable checkpoint scene with saved progress on restart after game over
+- Reusable checkpoint scene with saved progress and validated safe respawn on restart after game over
 - Basic audio feedback
 - Integrated reusable framework package under `packages/game-agent/`
 - A repo-native tooling registry under `tools/`
@@ -23,6 +23,7 @@ The game currently has:
 - A private GitHub repo connected at `origin`
 - A `make verify` preflight gate before human playback
 - A working `GUT` test setup wired into `make verify`
+- Documented gameplay invariants for safe respawn behavior
 
 ## Last Known Working Direction
 
@@ -30,6 +31,7 @@ The game currently has:
 - Evaluate and adopt external Godot dev tools gradually through the tooling registry
 - Use `Makefile` targets as the default local command entry point
 - Treat `make verify` as the minimum gate before asking the user to play a change
+- Treat checkpoint respawn as a validated safe state, not just a saved coordinate
 - Continue polishing the new environment-driven level presentation in steps
 - Use `SESSION_START.md` and root `state/` files as the primary session handoff path
 - Set up web export once Godot export templates are installed
@@ -55,8 +57,8 @@ The game currently has:
 The current `GUT` suite passes with:
 
 - 2 test scripts
-- 15 tests
-- 63 assertions
+- 16 tests
+- 68 assertions
 
 ## Resume Here
 

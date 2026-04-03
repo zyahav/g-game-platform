@@ -199,7 +199,7 @@ scale = Vector2(2.2, 1.5)
 position = Vector2(-32, 118)
 
 [node name="Checkpoint1" parent="." instance=ExtResource("19_checkpoint")]
-position = Vector2(-48, -12)
+position = Vector2(-140, -34)
 
 [node name="Step3" type="StaticBody2D" parent="."]
 position = Vector2(80, -50)

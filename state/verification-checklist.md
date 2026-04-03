@@ -34,6 +34,12 @@ Run this checklist after implementing a meaningful feature or refactor.
 - HUD/state/audio interactions still work if relevant
 - No known Godot editor errors were introduced
 
+## Respawn Safety
+
+- Any checkpoint or respawn logic restores a safe playable state, not only a position
+- Respawning does not immediately trigger game over without player input
+- If checkpoint logic exists, tests cover death-loop prevention after respawn
+
 ## Verification Result
 
 - State what was tested

@@ -68,6 +68,13 @@ Use the reusable framework in `packages/game-agent/` as support material, not as
 - If a session evaluates external tooling, update `tools/godot-agent-tooling-registry.md`.
 - Before handing a change to a human for playback, run `make verify` or state clearly why that could not be done.
 
+## Gameplay Invariants
+
+- Checkpoints must restore a safe playable state, not just a saved position.
+- A respawn is invalid if it causes immediate death or a death loop without player input.
+- Any new spawn, checkpoint, or teleport logic should be designed as a validated safe state in the game world, not only as coordinates.
+- When adding checkpoint-like systems, add or update automated tests that prove the respawn remains safe under gravity for a short period.
+
 ## Handoff Rule
 
 Before ending a significant work session, update:

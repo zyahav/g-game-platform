@@ -11,6 +11,8 @@ enum GameState {
 @export var back_cloud_speed := 8.0
 @export var front_cloud_speed := 14.0
 @export var cloud_wrap_width := 2200.0
+@export var respawn_ground_check_distance := 120.0
+@export var respawn_surface_margin := 1.0
 
 @onready var player: CharacterBody2D = $Player
 @onready var spawn_point: Marker2D = $SpawnPoint
@@ -101,7 +103,7 @@ func _restart_game() -> void:
 	_start_game()
 
 func _reset_player() -> void:
-	player.global_position = respawn_position
+	player.global_position = _find_safe_respawn_position(respawn_position)
 	player.velocity = Vector2.ZERO
 
 	var anim := player.get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
@@ -193,7 +195,7 @@ func _on_checkpoint_activated(checkpoint: Area2D) -> void:
 
 	checkpoint.activate()
 	has_checkpoint = true
-	respawn_position = checkpoint.get_respawn_position()
+	respawn_position = _find_safe_respawn_position(checkpoint.get_respawn_position())
 	checkpoint_score = score
 	checkpoint_collected_coins = _get_collected_coin_names()
 
@@ -233,6 +235,101 @@ func _get_collected_coin_names() -> Array[String]:
 func _restore_checkpoint_coin_state() -> void:
 	for coin in get_tree().get_nodes_in_group("coins"):
 		coin.set_collected_state(coin.name in checkpoint_collected_coins)
+
+
+func _find_safe_respawn_position(preferred_position: Vector2) -> Vector2:
+	var preferred_safe_position := _safe_position_for(preferred_position)
+	if preferred_safe_position != Vector2.INF:
+		return preferred_safe_position
+
+	var start_safe_position := _safe_position_for(initial_spawn_position)
+	if start_safe_position != Vector2.INF:
+		return start_safe_position
+
+	return initial_spawn_position
+
+
+func _safe_position_for(source_position: Vector2) -> Vector2:
+	var ground_hit := _find_ground_below(source_position)
+	if ground_hit.is_empty():
+		return Vector2.INF
+
+	var candidate: Vector2 = ground_hit.position
+	candidate.y -= _get_player_floor_offset() + respawn_surface_margin
+
+	if _position_overlaps_hazard(candidate):
+		return Vector2.INF
+
+	if _position_overlaps_body(candidate):
+		return Vector2.INF
+
+	return candidate
+
+
+func _find_ground_below(source_position: Vector2) -> Dictionary:
+	var space_state := get_world_2d().direct_space_state
+	var query := PhysicsRayQueryParameters2D.create(
+		source_position,
+		source_position + Vector2(0.0, respawn_ground_check_distance)
+	)
+	query.collide_with_areas = false
+	query.collide_with_bodies = true
+
+	return space_state.intersect_ray(query)
+
+
+func _get_player_floor_offset() -> float:
+	var collision_shape := player.get_node_or_null("CollisionShape2D") as CollisionShape2D
+	if collision_shape == null:
+		return 20.0
+
+	var rectangle_shape := collision_shape.shape as RectangleShape2D
+	if rectangle_shape == null:
+		return 20.0
+
+	return collision_shape.position.y + rectangle_shape.size.y * 0.5
+
+
+func _position_overlaps_hazard(candidate_position: Vector2) -> bool:
+	for hazard in get_tree().get_nodes_in_group("hazards"):
+		if hazard is Area2D:
+			var hazard_shape := hazard.get_node_or_null("CollisionShape2D") as CollisionShape2D
+			if hazard_shape == null:
+				continue
+
+			var rectangle := hazard_shape.shape as RectangleShape2D
+			if rectangle == null:
+				continue
+
+			var hazard_center: Vector2 = hazard.global_position + hazard_shape.position
+			var half_size := rectangle.size * 0.5
+			var hazard_rect := Rect2(hazard_center - half_size, rectangle.size)
+			if hazard_rect.has_point(candidate_position):
+				return true
+
+	return false
+
+
+func _position_overlaps_body(candidate_position: Vector2) -> bool:
+	var collision_shape := player.get_node_or_null("CollisionShape2D") as CollisionShape2D
+	if collision_shape == null:
+		return false
+
+	var rectangle_shape := collision_shape.shape as RectangleShape2D
+	if rectangle_shape == null:
+		return false
+
+	var query := PhysicsShapeQueryParameters2D.new()
+	query.shape = rectangle_shape
+	query.transform = Transform2D(0.0, candidate_position + collision_shape.position)
+	query.collide_with_areas = false
+	query.collide_with_bodies = true
+	query.margin = 0.0
+
+	var space_state := get_world_2d().direct_space_state
+	var collisions := space_state.intersect_shape(query)
+
+	return collisions.size() > 0
 
 func _update_hud() -> void:
 	score_label.text = "Score: %d" % score

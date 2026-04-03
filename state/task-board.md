@@ -21,6 +21,7 @@
 - Install `GUT` and wire it into `make verify`
 - Add reusable spike hazards with automated coverage
 - Add reusable checkpoints with saved progress and automated coverage
+- Add safe checkpoint respawn invariants and automated death-loop prevention coverage
 
 ## In Progress
 
@@ -34,7 +35,7 @@
 - Add better review and verification routine
 - Deepen the `Godot Forge` trial beyond the current smoke test
 - Trial `GDScript Toolkit`
-- Expand `GUT` coverage to restart flow and future hazards/checkpoints
+- Expand `GUT` coverage to future hazards/checkpoints and scene progression
 - Add the next sophistication pass: richer level progression or another checkpoint
 - Document browser export steps in-project
 - Consider adding a second checkpoint or a second section of the level
