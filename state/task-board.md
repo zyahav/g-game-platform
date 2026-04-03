@@ -16,6 +16,7 @@
 - Upgrade the level with layered background art, decorative trees, and a stronger collect-all-coins goal
 - Add a live repo tooling registry under `tools/` seeded from the Godot tooling handoff
 - Initialize local Git and add a `Makefile` for repeatable Godot/tooling commands
+- Create and connect the private GitHub remote
 
 ## In Progress
 
@@ -23,7 +24,6 @@
 - Verify the new environment-driven scene and cloud motion inside Godot
 - Set up reliable web export workflow
 - Begin gradual evaluation of Godot dev tooling from `tools/godot-agent-tooling-registry.md`
-- Create or connect the private GitHub remote
 
 ## Next
 

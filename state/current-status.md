@@ -18,6 +18,7 @@ The game currently has:
 - Integrated reusable framework package under `packages/game-agent/`
 - A repo-native tooling registry under `tools/`
 - A `Makefile` command surface for repeatable Godot and tooling commands
+- A private GitHub repo connected at `origin`
 
 ## Last Known Working Direction
 
@@ -36,7 +37,7 @@ The game currently has:
 - Web export templates are still not fully installed
 - No automated tests yet
 - External tooling has been cataloged, but not installed or verified yet
-- Git is initialized locally, but the private GitHub remote has not been created yet
+- `Godot Forge` is only smoke-tested so far, not deeply exercised against project checks yet
 
 ## Resume Here
 
@@ -44,5 +45,4 @@ The game currently has:
 2. Verify the new background layers, cloud motion, objective HUD, and collect-all-coins finish flow
 3. Fix any scene import or reference issues
 4. Continue tooling trials from `tools/godot-agent-tooling-registry.md`, starting with a deeper `Godot Forge` validation
-5. Create or connect the private GitHub remote
-6. Continue polishing the level and then resume web export setup
+5. Continue polishing the level and then resume web export setup
