@@ -7,6 +7,11 @@ enum GameState {
 	WON,
 }
 
+enum LoseReason {
+	FALL,
+	HAZARD,
+}
+
 @export var fall_limit := 320.0
 @export var back_cloud_speed := 8.0
 @export var front_cloud_speed := 14.0
@@ -63,7 +68,7 @@ func _process(delta: float) -> void:
 	_move_clouds(delta)
 
 	if state == GameState.PLAYING and player.global_position.y > fall_limit:
-		_lose()
+		_lose(LoseReason.FALL)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if state == GameState.PLAYING:
@@ -116,7 +121,7 @@ func _set_player_active(active: bool) -> void:
 	player.velocity = Vector2.ZERO
 	player.set_physics_process(active)
 
-func _lose() -> void:
+func _lose(reason: int = LoseReason.FALL) -> void:
 	if state != GameState.PLAYING:
 		return
 
@@ -125,9 +130,12 @@ func _lose() -> void:
 	_update_hud()
 	if lose_sfx != null:
 		lose_sfx.play()
+	var lose_message := "You fell before clearing the course."
+	if reason == LoseReason.HAZARD:
+		lose_message = "You were caught by the spikes before clearing the course."
 	_show_overlay(
 		"Game Over",
-		"You fell before clearing the course.",
+		lose_message,
 		"Click anywhere or press Space to restart.",
 	)
 
@@ -186,7 +194,7 @@ func _on_coin_collected(value: int) -> void:
 
 func _on_hazard_triggered(body: Node) -> void:
 	if body == player:
-		_lose()
+		_lose(LoseReason.HAZARD)
 
 
 func _on_checkpoint_activated(checkpoint: Area2D) -> void:

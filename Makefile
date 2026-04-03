@@ -67,7 +67,7 @@ verify: gut-test godot-smoke
 	@echo "Verification passed: assets imported and headless startup succeeded."
 
 godot-editor:
-	@$(GODOT_BIN) --path "$(PROJECT_ROOT)"
+	@$(GODOT_BIN) --editor --path "$(PROJECT_ROOT)"
 
 play: verify
 	@$(GODOT_BIN) --path "$(PROJECT_ROOT)"

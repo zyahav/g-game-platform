@@ -58,7 +58,7 @@ The current `GUT` suite passes with:
 
 - 2 test scripts
 - 16 tests
-- 68 assertions
+- 70 assertions
 
 ## Resume Here
 

@@ -40,6 +40,9 @@
 - Implemented validated safe checkpoint respawn instead of restoring raw checkpoint coordinates
 - Added automated checkpoint death-loop prevention coverage that waits under gravity after respawn
 - Confirmed `make verify` now passes with the safe-respawn checkpoint flow: 16 tests, 68 assertions
+- Fixed `make godot-editor` so it opens the editor UI instead of running the game scene
+- Fixed the lose overlay so spike deaths and fall deaths show different messages
+- Expanded automated coverage for death messaging and confirmed `make verify` now passes with 16 tests and 70 assertions
 
 ## Handoff Note
 

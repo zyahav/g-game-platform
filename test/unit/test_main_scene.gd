@@ -72,6 +72,7 @@ func test_falling_past_limit_triggers_game_over() -> void:
 	assert_eq(main_scene.state, main_scene.GameState.GAME_OVER)
 	assert_true(main_scene.overlay.visible)
 	assert_eq(main_scene.objective_label.text, "Restart to try again")
+	assert_string_contains(main_scene.message_label.text, "fell")
 	assert_false(main_scene.player.is_physics_processing())
 
 
@@ -213,6 +214,7 @@ func test_hazard_trigger_causes_game_over_for_player() -> void:
 
 	assert_eq(main_scene.state, main_scene.GameState.GAME_OVER)
 	assert_true(main_scene.overlay.visible)
+	assert_string_contains(main_scene.message_label.text, "spikes")
 	assert_false(main_scene.player.is_physics_processing())
 
 
