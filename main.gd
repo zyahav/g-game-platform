@@ -37,6 +37,7 @@ var total_coins := 0
 func _ready() -> void:
 	goal_area.body_entered.connect(_on_goal_body_entered)
 	_connect_coins()
+	_connect_hazards()
 	_reset_coins()
 	_reset_player()
 	_set_player_active(false)
@@ -146,6 +147,11 @@ func _connect_coins() -> void:
 	for coin in coins:
 		coin.collected.connect(_on_coin_collected)
 
+
+func _connect_hazards() -> void:
+	for hazard in get_tree().get_nodes_in_group("hazards"):
+		hazard.triggered.connect(_on_hazard_triggered)
+
 func _reset_coins() -> void:
 	for coin in get_tree().get_nodes_in_group("coins"):
 		coin.reset_coin()
@@ -155,6 +161,11 @@ func _on_coin_collected(value: int) -> void:
 	_update_hud()
 	if coin_sfx != null:
 		coin_sfx.play()
+
+
+func _on_hazard_triggered(body: Node) -> void:
+	if body == player:
+		_lose()
 
 func _update_hud() -> void:
 	score_label.text = "Score: %d" % score

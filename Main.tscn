@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://4kjj8gh3oya3"]
+[gd_scene load_steps=27 format=3 uid="uid://4kjj8gh3oya3"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_main"]
 [ext_resource type="PackedScene" uid="uid://tfla4k15dwod" path="res://Player.tscn" id="2_player"]
@@ -17,6 +17,7 @@
 [ext_resource type="Texture2D" path="res://assets/environment/free_platformer_na/background/CloudsFront.png" id="15_clouds_front"]
 [ext_resource type="Texture2D" path="res://assets/environment/free_platformer_na/generated/tree_small.png" id="16_tree_small"]
 [ext_resource type="Texture2D" path="res://assets/environment/free_platformer_na/generated/tree_large.png" id="17_tree_large"]
+[ext_resource type="PackedScene" path="res://scenes/hazards/SpikeHazard.tscn" id="18_spike_hazard"]
 
 [sub_resource type="RectangleShape2D" id="1"]
 size = Vector2(170, 20)
@@ -193,6 +194,9 @@ shape = SubResource("3")
 texture = ExtResource("3_grass")
 scale = Vector2(2.2, 1.5)
 
+[node name="Spikes1" parent="." instance=ExtResource("18_spike_hazard")]
+position = Vector2(-32, 118)
+
 [node name="Step3" type="StaticBody2D" parent="."]
 position = Vector2(80, -50)
 
@@ -218,6 +222,9 @@ shape = SubResource("5")
 [node name="Sprite2D" type="Sprite2D" parent="Step4"]
 texture = ExtResource("3_grass")
 scale = Vector2(1.8, 1.5)
+
+[node name="Spikes2" parent="." instance=ExtResource("18_spike_hazard")]
+position = Vector2(332, -50)
 
 [node name="FinalFloor" type="StaticBody2D" parent="."]
 position = Vector2(430, -150)

@@ -30,6 +30,9 @@
 - Current `GUT` suite now passes: 7 tests, 33 assertions
 - Expanded `GUT` coverage further for restart behavior, goal filtering, and win overlay text
 - Current `GUT` suite now passes: 10 tests, 45 assertions
+- Added reusable spike hazards and wired hazard-triggered game over into the main scene
+- Expanded `GUT` coverage for hazard-triggered lose flow
+- Current `GUT` suite now passes: 12 tests, 49 assertions
 
 ## Handoff Note
 

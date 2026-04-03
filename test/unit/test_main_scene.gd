@@ -119,3 +119,24 @@ func test_win_overlay_uses_expected_text() -> void:
 	assert_eq(main_scene.title_label.text, "You Win")
 	assert_string_contains(main_scene.message_label.text, "collected every coin")
 	assert_string_contains(main_scene.hint_label.text, "play again")
+
+
+func test_hazard_trigger_causes_game_over_for_player() -> void:
+	var main_scene = _make_main_scene()
+
+	main_scene._start_game()
+	main_scene._on_hazard_triggered(main_scene.player)
+
+	assert_eq(main_scene.state, main_scene.GameState.GAME_OVER)
+	assert_true(main_scene.overlay.visible)
+	assert_false(main_scene.player.is_physics_processing())
+
+
+func test_hazard_trigger_ignores_non_player_bodies() -> void:
+	var main_scene = _make_main_scene()
+	var stranger = autofree(Node2D.new())
+
+	main_scene._start_game()
+	main_scene._on_hazard_triggered(stranger)
+
+	assert_eq(main_scene.state, main_scene.GameState.PLAYING)
