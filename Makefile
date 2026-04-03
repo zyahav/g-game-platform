@@ -21,7 +21,7 @@ help:
 	@echo "  make godot-import  - import project assets in headless editor mode"
 	@echo "  make godot-smoke   - open the project headlessly and quit after startup"
 	@echo "  make godot-editor  - launch the Godot editor for this project"
-	@echo "  make play          - launch the game directly from the project's main scene"
+	@echo "  make play          - import assets if needed, then launch the game directly"
 	@echo "  make forge-help    - smoke-test Godot Forge availability via npx"
 
 check-env:
@@ -61,7 +61,7 @@ godot-smoke:
 godot-editor:
 	@$(GODOT_BIN) --path "$(PROJECT_ROOT)"
 
-play:
+play: godot-import
 	@$(GODOT_BIN) --path "$(PROJECT_ROOT)"
 
 forge-help:

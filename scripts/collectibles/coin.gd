@@ -32,9 +32,9 @@ func collect() -> void:
 
 	is_collected = true
 	visible = false
-	monitoring = false
-	monitorable = false
-	collision_shape.disabled = true
+	set_deferred("monitoring", false)
+	set_deferred("monitorable", false)
+	collision_shape.set_deferred("disabled", true)
 	collected.emit(value)
 
 func reset_coin() -> void:
@@ -42,9 +42,9 @@ func reset_coin() -> void:
 	visible = true
 	rotation = 0.0
 	position = base_position
-	monitoring = true
-	monitorable = true
-	collision_shape.disabled = false
+	set_deferred("monitoring", true)
+	set_deferred("monitorable", true)
+	collision_shape.set_deferred("disabled", false)
 
 func _on_body_entered(body: Node) -> void:
 	if body is CharacterBody2D:
