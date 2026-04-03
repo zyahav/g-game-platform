@@ -1,0 +1,30 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/progression/checkpoint.gd" id="1_checkpoint_script"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_checkpoint"]
+size = Vector2(24, 48)
+
+[node name="Checkpoint" type="Area2D"]
+script = ExtResource("1_checkpoint_script")
+monitorable = false
+
+[node name="RespawnPoint" type="Marker2D" parent="."]
+position = Vector2(0, -34)
+
+[node name="Pole" type="Polygon2D" parent="."]
+color = Color(0.372549, 0.266667, 0.188235, 1)
+polygon = PackedVector2Array(-2, 20, -2, -28, 2, -28, 2, 20)
+
+[node name="Flag" type="Polygon2D" parent="."]
+color = Color(1, 0.862745, 0.313726, 1)
+polygon = PackedVector2Array(2, -26, 20, -18, 2, -10)
+
+[node name="Glow" type="Polygon2D" parent="."]
+visible = false
+color = Color(0.356863, 0.847059, 0.47451, 0.35)
+polygon = PackedVector2Array(-16, 20, -8, -8, 12, -24, 30, -12, 24, 20)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(3, -4)
+shape = SubResource("RectangleShape2D_checkpoint")

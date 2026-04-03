@@ -45,9 +45,13 @@ Use the reusable framework in `packages/game-agent/` as support material, not as
 - `assets/generated/` for generated or cropped art used in-game
 - `scenes/` for game scenes
 - `scenes/collectibles/` for reusable collectible scenes
+- `scenes/hazards/` for reusable hazard scenes
+- `scenes/progression/` for reusable progression scenes such as checkpoints
 - `scenes/ui/` for UI scenes when needed
 - `scripts/` for gameplay scripts
 - `scripts/collectibles/` for collectible logic
+- `scripts/hazards/` for hazard logic
+- `scripts/progression/` for checkpoint and progression logic
 - `specs/` for project and feature specs
 - `state/` for current progress, task tracking, and session handoff notes
 - `tools/` for the repo's live tooling registry and tool-evaluation notes

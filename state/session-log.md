@@ -33,6 +33,9 @@
 - Added reusable spike hazards and wired hazard-triggered game over into the main scene
 - Expanded `GUT` coverage for hazard-triggered lose flow
 - Current `GUT` suite now passes: 12 tests, 49 assertions
+- Added reusable checkpoints that save coin/score progress and restore it after game over
+- Expanded `GUT` coverage for checkpoint activation, checkpoint restore, and fresh restart after win
+- Current `GUT` suite now passes: 15 tests, 63 assertions
 
 ## Handoff Note
 

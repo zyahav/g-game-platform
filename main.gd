@@ -33,11 +33,20 @@ enum GameState {
 var state := GameState.READY
 var score := 0
 var total_coins := 0
+var initial_spawn_position := Vector2.ZERO
+var respawn_position := Vector2.ZERO
+var has_checkpoint := false
+var checkpoint_score := 0
+var checkpoint_collected_coins: Array[String] = []
 
 func _ready() -> void:
+	initial_spawn_position = spawn_point.global_position
+	respawn_position = initial_spawn_position
 	goal_area.body_entered.connect(_on_goal_body_entered)
 	_connect_coins()
 	_connect_hazards()
+	_connect_checkpoints()
+	_clear_checkpoint_state()
 	_reset_coins()
 	_reset_player()
 	_set_player_active(false)
@@ -74,6 +83,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _start_game() -> void:
 	state = GameState.PLAYING
+	_clear_checkpoint_state()
 	score = 0
 	_reset_coins()
 	_reset_player()
@@ -84,10 +94,14 @@ func _start_game() -> void:
 	overlay.hide()
 
 func _restart_game() -> void:
+	if state == GameState.GAME_OVER and has_checkpoint:
+		_resume_from_checkpoint()
+		return
+
 	_start_game()
 
 func _reset_player() -> void:
-	player.global_position = spawn_point.global_position
+	player.global_position = respawn_position
 	player.velocity = Vector2.ZERO
 
 	var anim := player.get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
@@ -152,6 +166,11 @@ func _connect_hazards() -> void:
 	for hazard in get_tree().get_nodes_in_group("hazards"):
 		hazard.triggered.connect(_on_hazard_triggered)
 
+
+func _connect_checkpoints() -> void:
+	for checkpoint in get_tree().get_nodes_in_group("checkpoints"):
+		checkpoint.activated.connect(_on_checkpoint_activated)
+
 func _reset_coins() -> void:
 	for coin in get_tree().get_nodes_in_group("coins"):
 		coin.reset_coin()
@@ -166,6 +185,54 @@ func _on_coin_collected(value: int) -> void:
 func _on_hazard_triggered(body: Node) -> void:
 	if body == player:
 		_lose()
+
+
+func _on_checkpoint_activated(checkpoint: Area2D) -> void:
+	for other_checkpoint in get_tree().get_nodes_in_group("checkpoints"):
+		other_checkpoint.reset_checkpoint()
+
+	checkpoint.activate()
+	has_checkpoint = true
+	respawn_position = checkpoint.get_respawn_position()
+	checkpoint_score = score
+	checkpoint_collected_coins = _get_collected_coin_names()
+
+
+func _clear_checkpoint_state() -> void:
+	has_checkpoint = false
+	respawn_position = initial_spawn_position
+	checkpoint_score = 0
+	checkpoint_collected_coins.clear()
+
+	for checkpoint in get_tree().get_nodes_in_group("checkpoints"):
+		checkpoint.reset_checkpoint()
+
+
+func _resume_from_checkpoint() -> void:
+	state = GameState.PLAYING
+	score = checkpoint_score
+	_restore_checkpoint_coin_state()
+	_reset_player()
+	_set_player_active(true)
+	_update_hud()
+	if start_sfx != null:
+		start_sfx.play()
+	overlay.hide()
+
+
+func _get_collected_coin_names() -> Array[String]:
+	var names: Array[String] = []
+
+	for coin in get_tree().get_nodes_in_group("coins"):
+		if coin.is_collected:
+			names.append(coin.name)
+
+	return names
+
+
+func _restore_checkpoint_coin_state() -> void:
+	for coin in get_tree().get_nodes_in_group("coins"):
+		coin.set_collected_state(coin.name in checkpoint_collected_coins)
 
 func _update_hud() -> void:
 	score_label.text = "Score: %d" % score

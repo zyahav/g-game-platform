@@ -20,6 +20,7 @@
 - Add a `make verify` preflight gate before human playback
 - Install `GUT` and wire it into `make verify`
 - Add reusable spike hazards with automated coverage
+- Add reusable checkpoints with saved progress and automated coverage
 
 ## In Progress
 
@@ -34,9 +35,9 @@
 - Deepen the `Godot Forge` trial beyond the current smoke test
 - Trial `GDScript Toolkit`
 - Expand `GUT` coverage to restart flow and future hazards/checkpoints
-- Add the next sophistication pass: checkpoints or richer level progression
+- Add the next sophistication pass: richer level progression or another checkpoint
 - Document browser export steps in-project
-- Consider adding checkpoint or level progression state
+- Consider adding a second checkpoint or a second section of the level
 
 ## Blocked
 

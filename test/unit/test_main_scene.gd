@@ -121,6 +121,68 @@ func test_win_overlay_uses_expected_text() -> void:
 	assert_string_contains(main_scene.hint_label.text, "play again")
 
 
+func test_checkpoint_activation_saves_progress_for_restart() -> void:
+	var main_scene = _make_main_scene()
+	var checkpoint = main_scene.get_node("Checkpoint1")
+	var start_coin = main_scene.get_node("CoinStart")
+
+	main_scene._start_game()
+	start_coin.collect()
+	await wait_process_frames(1)
+	main_scene._on_checkpoint_activated(checkpoint)
+
+	assert_true(main_scene.has_checkpoint)
+	assert_eq(main_scene.checkpoint_score, 1)
+	assert_eq(main_scene.checkpoint_collected_coins, ["CoinStart"])
+	assert_eq(main_scene.respawn_position, checkpoint.get_respawn_position())
+
+
+func test_restart_after_checkpoint_restores_saved_progress() -> void:
+	var main_scene = _make_main_scene()
+	var checkpoint = main_scene.get_node("Checkpoint1")
+	var start_coin = main_scene.get_node("CoinStart")
+	var later_coin = main_scene.get_node("Coin4")
+
+	main_scene._start_game()
+	start_coin.collect()
+	await wait_process_frames(1)
+	main_scene._on_checkpoint_activated(checkpoint)
+	later_coin.collect()
+	await wait_process_frames(1)
+	main_scene._lose()
+
+	main_scene._restart_game()
+	await wait_process_frames(1)
+
+	assert_eq(main_scene.state, main_scene.GameState.PLAYING)
+	assert_eq(main_scene.score, 1)
+	assert_almost_eq(main_scene.player.global_position, checkpoint.get_respawn_position(), Vector2(1.0, 1.0))
+	assert_true(start_coin.is_collected)
+	assert_false(later_coin.is_collected)
+
+
+func test_win_then_restart_starts_fresh_even_with_checkpoint() -> void:
+	var main_scene = _make_main_scene()
+	var checkpoint = main_scene.get_node("Checkpoint1")
+	var start_coin = main_scene.get_node("CoinStart")
+
+	main_scene._start_game()
+	start_coin.collect()
+	await wait_process_frames(1)
+	main_scene._on_checkpoint_activated(checkpoint)
+	main_scene.score = main_scene.total_coins
+	main_scene._win()
+
+	main_scene._restart_game()
+	await wait_process_frames(1)
+
+	assert_eq(main_scene.state, main_scene.GameState.PLAYING)
+	assert_eq(main_scene.score, 0)
+	assert_false(main_scene.has_checkpoint)
+	assert_almost_eq(main_scene.player.global_position, main_scene.spawn_point.global_position, Vector2(1.0, 1.0))
+	assert_false(start_coin.is_collected)
+
+
 func test_hazard_trigger_causes_game_over_for_player() -> void:
 	var main_scene = _make_main_scene()
 

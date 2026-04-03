@@ -15,6 +15,7 @@ The game currently has:
 - HUD with score and coin count
 - Reusable coin scene and coin collection
 - Reusable spike hazard scene and hazard-triggered lose flow
+- Reusable checkpoint scene with saved progress on restart after game over
 - Basic audio feedback
 - Integrated reusable framework package under `packages/game-agent/`
 - A repo-native tooling registry under `tools/`
@@ -54,15 +55,15 @@ The game currently has:
 The current `GUT` suite passes with:
 
 - 2 test scripts
-- 12 tests
-- 49 assertions
+- 15 tests
+- 63 assertions
 
 ## Resume Here
 
 1. Run `make verify` after meaningful gameplay changes before asking for human playback
 2. Open the project in Godot
 3. Verify the new background layers, cloud motion, objective HUD, and collect-all-coins finish flow
-4. Add the next progression layer, likely checkpoints or a richer second section
+4. Add the next progression layer, likely a richer second section or another checkpoint
 5. Expand `GUT` coverage alongside any new hazards/checkpoints
 6. Continue tooling trials from `tools/godot-agent-tooling-registry.md`, starting with a deeper `Godot Forge` validation
 7. Continue polishing the level and then resume web export setup
