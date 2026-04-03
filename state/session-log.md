@@ -28,6 +28,8 @@
 - Confirmed the first `GUT` suite passes: 3 tests, 15 assertions
 - Expanded `GUT` coverage for start/play state, coin score updates, win gating, and fall-to-game-over flow
 - Current `GUT` suite now passes: 7 tests, 33 assertions
+- Expanded `GUT` coverage further for restart behavior, goal filtering, and win overlay text
+- Current `GUT` suite now passes: 10 tests, 45 assertions
 
 ## Handoff Note
 

@@ -73,3 +73,49 @@ func test_falling_past_limit_triggers_game_over() -> void:
 	assert_true(main_scene.overlay.visible)
 	assert_eq(main_scene.objective_label.text, "Restart to try again")
 	assert_false(main_scene.player.is_physics_processing())
+
+
+func test_restart_game_resets_score_player_and_coins() -> void:
+	var main_scene = _make_main_scene()
+	var start_coin = main_scene.get_node("CoinStart")
+
+	main_scene._start_game()
+	start_coin.collect()
+	await wait_process_frames(1)
+	main_scene.player.global_position = Vector2(123.0, 456.0)
+	main_scene._lose()
+
+	main_scene._restart_game()
+	await wait_process_frames(1)
+
+	assert_eq(main_scene.state, main_scene.GameState.PLAYING)
+	assert_eq(main_scene.score, 0)
+	assert_false(main_scene.overlay.visible)
+	assert_almost_eq(main_scene.player.global_position, main_scene.spawn_point.global_position, Vector2(1.0, 1.0))
+	assert_false(start_coin.is_collected)
+	assert_true(start_coin.visible)
+	assert_true(start_coin.monitoring)
+	assert_true(start_coin.monitorable)
+
+
+func test_goal_ignores_non_player_bodies() -> void:
+	var main_scene = _make_main_scene()
+	var stranger = autofree(Node2D.new())
+
+	main_scene._start_game()
+	main_scene.score = main_scene.total_coins
+	main_scene._on_goal_body_entered(stranger)
+
+	assert_eq(main_scene.state, main_scene.GameState.PLAYING)
+
+
+func test_win_overlay_uses_expected_text() -> void:
+	var main_scene = _make_main_scene()
+
+	main_scene._start_game()
+	main_scene.score = main_scene.total_coins
+	main_scene._win()
+
+	assert_eq(main_scene.title_label.text, "You Win")
+	assert_string_contains(main_scene.message_label.text, "collected every coin")
+	assert_string_contains(main_scene.hint_label.text, "play again")
