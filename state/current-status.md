@@ -19,12 +19,14 @@ The game currently has:
 - A repo-native tooling registry under `tools/`
 - A `Makefile` command surface for repeatable Godot and tooling commands
 - A private GitHub repo connected at `origin`
+- A `make verify` preflight gate before human playback
 
 ## Last Known Working Direction
 
 - Continue improving structure and verification workflow
 - Evaluate and adopt external Godot dev tools gradually through the tooling registry
 - Use `Makefile` targets as the default local command entry point
+- Treat `make verify` as the minimum gate before asking the user to play a change
 - Continue polishing the new environment-driven level presentation in steps
 - Use `SESSION_START.md` and root `state/` files as the primary session handoff path
 - Set up web export once Godot export templates are installed
@@ -38,11 +40,12 @@ The game currently has:
 - No automated tests yet
 - External tooling has been cataloged, but not installed or verified yet
 - `Godot Forge` is only smoke-tested so far, not deeply exercised against project checks yet
+- `make verify` is a preflight gate, but it is still only a smoke-level check until a real test framework is added
 
 ## Resume Here
 
-1. Open the project in Godot
-2. Verify the new background layers, cloud motion, objective HUD, and collect-all-coins finish flow
-3. Fix any scene import or reference issues
+1. Run `make verify` after meaningful gameplay changes before asking for human playback
+2. Open the project in Godot
+3. Verify the new background layers, cloud motion, objective HUD, and collect-all-coins finish flow
 4. Continue tooling trials from `tools/godot-agent-tooling-registry.md`, starting with a deeper `Godot Forge` validation
 5. Continue polishing the level and then resume web export setup

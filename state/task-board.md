@@ -17,6 +17,7 @@
 - Add a live repo tooling registry under `tools/` seeded from the Godot tooling handoff
 - Initialize local Git and add a `Makefile` for repeatable Godot/tooling commands
 - Create and connect the private GitHub remote
+- Add a `make verify` preflight gate before human playback
 
 ## In Progress
 
@@ -31,6 +32,7 @@
 - Deepen the `Godot Forge` trial beyond the current smoke test
 - Choose between `GUT` and `GdUnit4`
 - Trial `GDScript Toolkit`
+- Expand `make verify` to include real automated tests once a framework is installed
 - Add the next sophistication pass: hazards, checkpoints, or richer level progression
 - Document browser export steps in-project
 - Consider adding checkpoint or level progression state

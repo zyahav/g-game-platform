@@ -2,6 +2,12 @@
 
 Run this checklist after implementing a meaningful feature or refactor.
 
+## Required Gate Before Human Playback
+
+- Run `make verify` before asking a human to play or inspect the game
+- If `make verify` fails, fix the issue first or state the blocker clearly
+- If `make verify` cannot be run, say that explicitly before handing off
+
 ## Files
 
 - New files are in the correct folders
@@ -32,6 +38,7 @@ Run this checklist after implementing a meaningful feature or refactor.
 
 - State what was tested
 - State what could not be tested from the current session
+- State whether `make verify` passed
 - Add follow-up tasks if verification is blocked
 
 ## Handoff

@@ -21,6 +21,7 @@
 - Confirmed `make godot-smoke` starts the project headlessly and exits successfully
 - Smoke-tested `Godot Forge` via `make forge-help`
 - Confirmed GitHub CLI auth on this machine and created the private repo `https://github.com/zyahav/farm-game`
+- Added `make verify` and made `make play` depend on that preflight gate
 
 ## Handoff Note
 

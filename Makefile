@@ -7,7 +7,7 @@ PROJECT_ROOT := $(CURDIR)
 PROJECT_NAME ?= $(notdir $(PROJECT_ROOT))
 NPX ?= npx
 
-.PHONY: help check-env git-status gh-version gh-auth gh-create-private gh-push-main godot-version godot-import godot-smoke godot-editor play forge-help
+.PHONY: help check-env git-status gh-version gh-auth gh-create-private gh-push-main godot-version godot-import godot-smoke godot-editor verify play forge-help
 
 help:
 	@echo "Available targets:"
@@ -20,8 +20,9 @@ help:
 	@echo "  make godot-version - print the Godot binary version"
 	@echo "  make godot-import  - import project assets in headless editor mode"
 	@echo "  make godot-smoke   - open the project headlessly and quit after startup"
+	@echo "  make verify        - run the required preflight before handing work to a human"
 	@echo "  make godot-editor  - launch the Godot editor for this project"
-	@echo "  make play          - import assets if needed, then launch the game directly"
+	@echo "  make play          - run preflight, then launch the game directly"
 	@echo "  make forge-help    - smoke-test Godot Forge availability via npx"
 
 check-env:
@@ -58,10 +59,13 @@ godot-import:
 godot-smoke:
 	@$(GODOT_BIN) --headless --path "$(PROJECT_ROOT)" --editor --quit-after 1
 
+verify: godot-import godot-smoke
+	@echo "Verification passed: assets imported and headless startup succeeded."
+
 godot-editor:
 	@$(GODOT_BIN) --path "$(PROJECT_ROOT)"
 
-play: godot-import
+play: verify
 	@$(GODOT_BIN) --path "$(PROJECT_ROOT)"
 
 forge-help:

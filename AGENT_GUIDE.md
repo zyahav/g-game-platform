@@ -62,6 +62,7 @@ Use the reusable framework in `packages/game-agent/` as support material, not as
 - Keep file and node names clear and stable.
 - Use `state/verification-checklist.md` before closing a significant task.
 - If a session evaluates external tooling, update `tools/godot-agent-tooling-registry.md`.
+- Before handing a change to a human for playback, run `make verify` or state clearly why that could not be done.
 
 ## Handoff Rule
 
