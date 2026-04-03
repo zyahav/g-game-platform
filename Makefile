@@ -7,7 +7,7 @@ PROJECT_ROOT := $(CURDIR)
 PROJECT_NAME ?= $(notdir $(PROJECT_ROOT))
 NPX ?= npx
 
-.PHONY: help check-env git-status gh-version gh-auth gh-create-private gh-push-main godot-version godot-import godot-smoke godot-editor forge-help
+.PHONY: help check-env git-status gh-version gh-auth gh-create-private gh-push-main godot-version godot-import godot-smoke godot-editor play forge-help
 
 help:
 	@echo "Available targets:"
@@ -21,6 +21,7 @@ help:
 	@echo "  make godot-import  - import project assets in headless editor mode"
 	@echo "  make godot-smoke   - open the project headlessly and quit after startup"
 	@echo "  make godot-editor  - launch the Godot editor for this project"
+	@echo "  make play          - launch the game directly from the project's main scene"
 	@echo "  make forge-help    - smoke-test Godot Forge availability via npx"
 
 check-env:
@@ -58,6 +59,9 @@ godot-smoke:
 	@$(GODOT_BIN) --headless --path "$(PROJECT_ROOT)" --editor --quit-after 1
 
 godot-editor:
+	@$(GODOT_BIN) --path "$(PROJECT_ROOT)"
+
+play:
 	@$(GODOT_BIN) --path "$(PROJECT_ROOT)"
 
 forge-help:
