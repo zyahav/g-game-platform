@@ -53,14 +53,14 @@ The game currently has:
 The current `GUT` suite passes with:
 
 - 2 test scripts
-- 3 tests
-- 15 assertions
+- 7 tests
+- 33 assertions
 
 ## Resume Here
 
 1. Run `make verify` after meaningful gameplay changes before asking for human playback
 2. Open the project in Godot
 3. Verify the new background layers, cloud motion, objective HUD, and collect-all-coins finish flow
-4. Expand `GUT` coverage to restart, win, and lose flow
+4. Expand `GUT` coverage to restart flow and any new hazards/checkpoints
 5. Continue tooling trials from `tools/godot-agent-tooling-registry.md`, starting with a deeper `Godot Forge` validation
 6. Continue polishing the level and then resume web export setup

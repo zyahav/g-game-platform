@@ -32,7 +32,7 @@
 - Add better review and verification routine
 - Deepen the `Godot Forge` trial beyond the current smoke test
 - Trial `GDScript Toolkit`
-- Expand `GUT` coverage to restart, win, lose, and score flow
+- Expand `GUT` coverage to restart flow and future hazards/checkpoints
 - Add the next sophistication pass: hazards, checkpoints, or richer level progression
 - Document browser export steps in-project
 - Consider adding checkpoint or level progression state
