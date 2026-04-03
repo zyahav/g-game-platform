@@ -18,7 +18,7 @@ func _ready() -> void:
 	base_position = position
 	time_offset = position.x * 0.01
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	if is_collected:
 		return
 

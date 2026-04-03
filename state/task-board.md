@@ -18,6 +18,7 @@
 - Initialize local Git and add a `Makefile` for repeatable Godot/tooling commands
 - Create and connect the private GitHub remote
 - Add a `make verify` preflight gate before human playback
+- Install `GUT` and wire it into `make verify`
 
 ## In Progress
 
@@ -30,9 +31,8 @@
 
 - Add better review and verification routine
 - Deepen the `Godot Forge` trial beyond the current smoke test
-- Choose between `GUT` and `GdUnit4`
 - Trial `GDScript Toolkit`
-- Expand `make verify` to include real automated tests once a framework is installed
+- Expand `GUT` coverage to restart, win, lose, and score flow
 - Add the next sophistication pass: hazards, checkpoints, or richer level progression
 - Document browser export steps in-project
 - Consider adding checkpoint or level progression state

@@ -22,6 +22,10 @@
 - Smoke-tested `Godot Forge` via `make forge-help`
 - Confirmed GitHub CLI auth on this machine and created the private repo `https://github.com/zyahav/farm-game`
 - Added `make verify` and made `make play` depend on that preflight gate
+- Installed `GUT` 9.6.0 under `addons/gut`
+- Added `.gutconfig.json` and the first automated tests under `test/unit/`
+- Wired `make gut-test` into `make verify`
+- Confirmed the first `GUT` suite passes: 3 tests, 15 assertions
 
 ## Handoff Note
 

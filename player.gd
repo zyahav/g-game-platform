@@ -33,13 +33,13 @@ func _physics_process(delta: float) -> void:
 
 	move_and_slide()
 
-func _play_animation(name: StringName) -> void:
+func _play_animation(animation_name: StringName) -> void:
 	if anim == null or anim.sprite_frames == null:
 		return
 
-	if anim.sprite_frames.has_animation(name) and anim.sprite_frames.get_frame_count(name) > 0:
-		if anim.animation != name or not anim.is_playing():
-			anim.play(name)
+	if anim.sprite_frames.has_animation(animation_name) and anim.sprite_frames.get_frame_count(animation_name) > 0:
+		if anim.animation != animation_name or not anim.is_playing():
+			anim.play(animation_name)
 		return
 
 	if anim.sprite_frames.has_animation(&"Idle") and anim.sprite_frames.get_frame_count(&"Idle") > 0:

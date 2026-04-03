@@ -59,7 +59,7 @@ Reason: useful later if we start juggling multiple Godot versions.
 | `Godot MCP (tomyud)` | MCP / runtime control | Mid-sized open-source MCP with project browser | `Captured` | Viable fallback if the first MCP choice is awkward | Keep as backup |
 | `Godot MCP (bradypp)` | MCP / runtime control | Lean open-source MCP with read-only mode option | `Captured` | Good safety-oriented option for analysis-first use | Keep as backup |
 | `Godot Forge` | API correctness / project analysis | Catching Godot 3 to Godot 4 mistakes, scene structure checks, compiler feedback | `Smoke Tested` | Very strong fit | Add a deeper project-level Forge check after the first smoke pass |
-| `GUT` | Testing framework | Simple Godot 4 GDScript tests and CLI test runs | `Researched` | Strong fit for this GDScript-heavy project | Decide between `GUT` and `GdUnit4` as the first test framework |
+| `GUT` | Testing framework | Simple Godot 4 GDScript tests and CLI test runs | `Verified` | Strong fit for this GDScript-heavy project | Expand test coverage and keep it inside `make verify` |
 | `GdUnit4` | Testing framework | Richer scene/integration testing, fluent assertions, reports | `Researched` | Also a strong fit, especially for gameplay flow tests | Compare against `GUT` before installing |
 | `GDScript Toolkit` | Linting / formatting | `gdlint` and `gdformat` from the terminal | `Queued` | Strong fit for faster local verification | Trial after the testing framework decision |
 | `Godot GDScript Linter (godot-qube)` | In-engine static analysis | Complexity and style analysis from headless Godot | `Captured` | Useful, but likely second priority after toolkit + tests | Leave for later evaluation |
@@ -137,10 +137,10 @@ Reason: useful later if we start juggling multiple Godot versions.
 **Category:** Testing framework  
 **Good for:** straightforward unit and gameplay-oriented tests in GDScript, command-line execution, and low-friction adoption.  
 **Why it could help us:** this repo is primarily GDScript, and we want a simple repeatable testing path. `GUT` looks like the lower-friction option.  
-**Cautions:** not installed yet. We should still compare it honestly with `GdUnit4` before choosing.  
-**Current status:** `Researched`  
-**Evidence:** official docs and repo were reviewed on April 3, 2026.  
-**Next evaluation step:** decide whether simplicity matters more than the richer feature set of `GdUnit4`.
+**Cautions:** the current suite is still small, so passing tests should be treated as a meaningful gate but not full gameplay confidence.  
+**Current status:** `Verified`  
+**Evidence:** on April 3, 2026, GUT `9.6.0` was installed under `addons/gut`, `.gutconfig.json` was added, `make gut-test` passed, and `make verify` was updated to run GUT before human playback. The first suite currently covers coin behavior and main-scene instantiation.  
+**Next evaluation step:** keep `GUT` as the primary first-line test framework and grow coverage around gameplay flow, restart behavior, and win/lose logic.
 
 ### GdUnit4
 
