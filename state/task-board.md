@@ -46,21 +46,24 @@
   - copied distilled `kit/`
   - seeded state/specs/tools/docs/tests
   - generated project CI and hooks
-
-## In Progress
-
-- Hold at Gate C for PM approval before Batch 4
-
-## Next
-
-- Verify the generated project's runtime commands:
+- Complete Batch 4 runtime verification work:
   - `make play`
   - `make smoke`
   - `make test`
   - `make verify`
   - `make setup-hooks`
   - `make editor`
+  - generator cleanup for stale UID warnings
+
+## In Progress
+
+- Hold at Gate D for PM approval before Batch 5
+
+## Next
+
 - Verify cold-start and ongoing-session `AGENT.md` behavior on the generated project
+- Check that the generated project's pre-commit hook blocks `FIXME` in `.gd` files
+- Check that generated-project CI passes clean and fails on intentional `FIXME`
 - Revisit the direct local `scripts/ci/verify.sh` crash if it still reproduces once Batch 2 begins
 
 ## Blocked

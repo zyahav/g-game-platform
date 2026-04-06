@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import shutil
 import subprocess
 from datetime import datetime, timezone
@@ -37,6 +38,12 @@ def replace_text(path: Path, replacements: list[tuple[str, str]]) -> None:
     content = path.read_text(encoding="utf-8")
     for old, new in replacements:
         content = content.replace(old, new)
+    path.write_text(content, encoding="utf-8")
+
+
+def strip_ext_resource_uids(path: Path) -> None:
+    content = path.read_text(encoding="utf-8")
+    content = re.sub(r' uid="uid://[^"]+"', "", content)
     path.write_text(content, encoding="utf-8")
 
 
@@ -299,6 +306,8 @@ setup-hooks:
             ('path="res://Player/', 'path="res://assets/characters/player/'),
         ],
     )
+    strip_ext_resource_uids(output_dir / "scenes" / "Main.tscn")
+    strip_ext_resource_uids(output_dir / "scenes" / "Player.tscn")
 
     write_text(
         output_dir / "state" / "current-status.md",

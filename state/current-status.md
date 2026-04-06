@@ -2,14 +2,14 @@
 
 ## Stage
 
-Platform build, Batch 3 complete
+Platform build, Batch 4 complete
 
 ## Implementation Tracker
 
-- Current batch: Batch 3
-- Current step: 35
-- Last completed step: 34
-- Gate status: Gate C ready for review
+- Current batch: Batch 4
+- Current step: 43
+- Last completed step: 42
+- Gate status: Gate D ready for review
 
 ## Summary
 
@@ -44,18 +44,20 @@ The repo currently has:
 - A project generator at `scripts/generate_project.py`
 - A generated student project sample at `apps/platformer-generated` for local verification only
 - Generated projects now receive copied `core/`, copied distilled `kit/`, seeded docs/state/specs/tests, and a separate Git repo
+- A generator fix that strips stale source-resource UIDs from generated scenes so Godot loads the generated project cleanly by text paths without UID warnings
+- A second clean runtime verification sample at `apps/platformer-generated-clean`
 
 ## Last Known Working Direction
 
-- Hold at Gate C for PM approval before starting Batch 4 runtime verification
-- Use `scripts/generate_project.py` as the current generation flow
+- Hold at Gate D for PM approval before starting Batch 5 startup-flow verification
+- Use `apps/platformer-generated-clean` as the current verified generated-project sample
 - Keep generated projects separate from the platform repo, with `core/` and `kit/` copied in as read-only reference layers
 - Preserve the current game as the proven source behind future kit changes
 
 ## Known Gaps
 
-- Batch 4 end-to-end runtime verification on the generated project has not started yet
-- The generated project sample under `apps/` is local verification output and is intentionally not committed
+- Batch 5 `AGENT.md` startup-flow verification has not started yet
+- The generated project samples under `apps/` are local verification outputs and are intentionally not committed
 - Direct local invocation of `scripts/ci/verify.sh` currently crashes inside Godot's headless logging path in this Codex sandbox even though `make test` and `make smoke` both pass on their own
 - Web export templates are still not fully installed
 - Automated coverage is still small even though `GUT` is installed and running
@@ -72,6 +74,14 @@ The repo currently has:
 - `apps/platformer-generated/Makefile` contains all six required targets
 - `apps/platformer-generated/kit/` excludes `templates/` and `reference/`
 - `apps/platformer-generated/make setup-hooks` succeeds inside the generated project's own Git repo
+- `apps/platformer-generated-clean` passes:
+  - `make setup-hooks`
+  - `make smoke`
+  - `make test`
+  - `make verify`
+  - `make play`
+  - `make editor`
+- The cleaned generator no longer emits stale source-resource UID warnings during generated-project startup
 - The current `GUT` suite still passes with:
   - 2 test scripts
   - 16 tests
@@ -79,7 +89,7 @@ The repo currently has:
 
 ## Resume Here
 
-1. Review Gate C and approve or reject Batch 3
-2. If approved, start Batch 4 and verify the generated project's actual runtime commands end to end
-3. Use `apps/platformer-generated` as the current local verification target for Batch 4
+1. Review Gate D and approve or reject Batch 4
+2. If approved, start Batch 5 and verify cold-start and ongoing-session `AGENT.md` behavior
+3. Use `apps/platformer-generated-clean` as the current local verification target for Batch 5
 4. Revisit the direct `scripts/ci/verify.sh` crash before later CI-focused gates if it persists

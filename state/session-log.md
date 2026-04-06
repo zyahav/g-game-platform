@@ -83,7 +83,15 @@
 - Confirmed the generated project initializes its own Git repo and `make setup-hooks` succeeds there
 - Confirmed the generated project workflow file parses as valid YAML
 - Confirmed Gate C is ready for review
+- Started Batch 4 runtime verification on the generated project
+- Verified `make setup-hooks`, `make smoke`, `make test`, and `make verify` inside the generated project
+- Verified `make play` opens the generated game and reaches a live runtime session
+- Verified `make editor` opens the generated project in the Godot editor
+- Tightened the generator to strip stale source-resource UIDs from generated scenes so the generated project no longer logs invalid UID fallback warnings on startup
+- Regenerated a clean verification sample at `apps/platformer-generated-clean`
+- Re-ran the generated-project runtime checks successfully against the clean sample
+- Confirmed Gate D is ready for review
 
 ## Handoff Note
 
-Batch 3 is complete and waiting at Gate C. Do not start Batch 4 until approval is given.
+Batch 4 is complete and waiting at Gate D. Do not start Batch 5 until approval is given.
