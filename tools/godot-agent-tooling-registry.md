@@ -52,6 +52,7 @@ Reason: useful later if we start juggling multiple Godot versions.
 
 | Tool | Category | Best For | Current Status | Fit For This Repo | Next Step |
 | --- | --- | --- | --- | --- | --- |
+| `Codex CLI` | Agent CLI / project setup | Student install flow, generated-project bootstrap, verification from a fresh directory | `Verified` | Strong fit as the student-facing entrypoint for this platform | Document the verified install command and local `HOME` workaround for Godot verification |
 | `GodotIQ` | MCP / runtime intelligence | Deep scene understanding, spatial context, code analysis | `Captured` | Promising, especially if we want richer editor/runtime visibility | Validate install path and compatibility with Codex workflow |
 | `Godot MCP (Coding-Solo)` | MCP / runtime control | Launching editor, running project, debug output, scene operations | `Captured` | Strong candidate for a first general MCP server | Evaluate against GodotIQ as the first MCP trial |
 | `GDAI MCP` | MCP / paid runtime control | Screenshots, input simulation, run-fix-verify loops | `Captured` | Interesting, but likely overkill before free options are tested | Leave for later unless free tools fall short |
@@ -67,6 +68,36 @@ Reason: useful later if we start juggling multiple Godot versions.
 | `godot-mcp-docs` | Documentation MCP | Querying official Godot docs from an agent workflow | `Captured` | Nice support tool, but not the top blocker right now | Consider after core testing/runtime tools |
 
 ## Detailed Notes
+
+### Codex CLI
+
+**Category:** Agent CLI / project setup  
+**Good for:** starting from an empty directory, pointing the agent at the platform repo, generating a student project, and running the generated verification gate.  
+**Why it could help us:** this is the actual student-facing path for the platform. It lets a student begin from a clean directory and have Codex read the platform `AGENT.md`, select a kit, generate the project, and continue inside the generated repo.  
+**Cautions:** in this environment, `codex exec` was unstable in `/tmp` but worked from a real directory under `/Users/zyahav/Documents/dev`. Also, Godot inside the CLI sandbox initially failed when it tried to write to the default macOS user-data path.  
+**Current status:** `Verified`  
+**Evidence:** on April 6, 2026, the full flow was verified from `/Users/zyahav/Documents/dev/codex-e2e-test` using `codex exec --skip-git-repo-check --full-auto`. Codex read `/Users/zyahav/farm-game/AGENT.md`, selected the `platformer` kit, generated `student-project`, switched into it, and passed the generated verification gate after retrying with a workspace-local `HOME`, `XDG_DATA_HOME`, and `XDG_CONFIG_HOME`. The platform repo remained clean during the flow.  
+**Verified command shape:**
+
+```bash
+mkdir -p /Users/zyahav/Documents/dev/codex-e2e-test
+cd /Users/zyahav/Documents/dev/codex-e2e-test
+codex exec --skip-git-repo-check --full-auto \
+  -C /Users/zyahav/Documents/dev/codex-e2e-test \
+  "Read /Users/zyahav/farm-game/AGENT.md and use /Users/zyahav/farm-game as the platform repository source. Follow setup mode. Choose the platformer kit automatically. Generate the student project into ./student-project. After generation, switch to that generated project directory, run make verify, and summarize whether it passed. Do not modify the platform source repository."
+```
+
+**Godot verification workaround inside the generated project:**
+
+```bash
+mkdir -p .home
+HOME="$PWD/.home" \
+XDG_DATA_HOME="$PWD/.home/.local/share" \
+XDG_CONFIG_HOME="$PWD/.home/.config" \
+make verify
+```
+
+**Next evaluation step:** decide whether the generated-project `Makefile` should officially expose a student-friendly helper for the local-`HOME` Godot path, or whether this remains a CLI-environment note only.
 
 ### GodotIQ
 

@@ -101,6 +101,9 @@
 - Verified the corrected generated CI now fails as expected when `scripts/player.gd` contains an intentional `FIXME`
 - Generated fresh Gate E samples at `apps/platformer-generated-gatee2` and `apps/platformer-generated-gatee3`
 - Confirmed Gate E is ready for review
+- Verified the real Codex CLI student-install flow from `/Users/zyahav/Documents/dev/codex-e2e-test`
+- Confirmed `codex exec --skip-git-repo-check --full-auto` can read the platform `AGENT.md`, generate `student-project`, and switch into it without modifying the platform source repo
+- Confirmed generated-project verification passes from Codex CLI when Godot uses a workspace-local `HOME`, `XDG_DATA_HOME`, and `XDG_CONFIG_HOME`
 
 ## Handoff Note
 
