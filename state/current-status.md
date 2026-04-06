@@ -2,14 +2,14 @@
 
 ## Stage
 
-Platform build, Batch 2 complete
+Platform build, Batch 3 complete
 
 ## Implementation Tracker
 
-- Current batch: Batch 2
-- Current step: 20
-- Last completed step: 19
-- Gate status: Gate B ready for review
+- Current batch: Batch 3
+- Current step: 35
+- Last completed step: 34
+- Gate status: Gate C ready for review
 
 ## Summary
 
@@ -41,18 +41,21 @@ The repo currently has:
 - A first extracted `platformer` kit under `kits/platformer/`
 - Distilled platformer kit specs, skills, acceptance docs, templates, and reference notes based on the working game
 - A runnable kit template snapshot that smoke-tests successfully in isolation
+- A project generator at `scripts/generate_project.py`
+- A generated student project sample at `apps/platformer-generated` for local verification only
+- Generated projects now receive copied `core/`, copied distilled `kit/`, seeded docs/state/specs/tests, and a separate Git repo
 
 ## Last Known Working Direction
 
-- Hold at Gate B for PM approval before starting project generation
-- Use the extracted `platformer` kit as the source for generated project files in Batch 3
-- Keep generation aligned with the copied `core/` contract and the distilled kit contract
+- Hold at Gate C for PM approval before starting Batch 4 runtime verification
+- Use `scripts/generate_project.py` as the current generation flow
+- Keep generated projects separate from the platform repo, with `core/` and `kit/` copied in as read-only reference layers
 - Preserve the current game as the proven source behind future kit changes
 
 ## Known Gaps
 
-- Project generation has not started yet
-- The platform repo still contains the current game because the first generated-project flow has not been built yet
+- Batch 4 end-to-end runtime verification on the generated project has not started yet
+- The generated project sample under `apps/` is local verification output and is intentionally not committed
 - Direct local invocation of `scripts/ci/verify.sh` currently crashes inside Godot's headless logging path in this Codex sandbox even though `make test` and `make smoke` both pass on their own
 - Web export templates are still not fully installed
 - Automated coverage is still small even though `GUT` is installed and running
@@ -64,6 +67,11 @@ The repo currently has:
 - `make setup-hooks` installs the new `scripts/hooks/pre-commit.sh` symlink successfully
 - `kits/platformer/kit.manifest.json` validates as JSON
 - `kits/platformer/templates/` smoke-tests successfully with Godot headless startup
+- `apps/platformer-generated/project.kit.json` validates as JSON
+- `apps/platformer-generated/.github/workflows/verify.yml` parses as valid YAML
+- `apps/platformer-generated/Makefile` contains all six required targets
+- `apps/platformer-generated/kit/` excludes `templates/` and `reference/`
+- `apps/platformer-generated/make setup-hooks` succeeds inside the generated project's own Git repo
 - The current `GUT` suite still passes with:
   - 2 test scripts
   - 16 tests
@@ -71,7 +79,7 @@ The repo currently has:
 
 ## Resume Here
 
-1. Review Gate B and approve or reject Batch 2
-2. If approved, start Batch 3 and build project generation from the extracted `platformer` kit
-3. Keep generated-project output aligned with the agreed root contract and cold-start/ongoing-session rules
+1. Review Gate C and approve or reject Batch 3
+2. If approved, start Batch 4 and verify the generated project's actual runtime commands end to end
+3. Use `apps/platformer-generated` as the current local verification target for Batch 4
 4. Revisit the direct `scripts/ci/verify.sh` crash before later CI-focused gates if it persists

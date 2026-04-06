@@ -68,7 +68,22 @@
 - Added authoring reference notes under `kits/platformer/reference/`
 - Verified the kit manifest as valid JSON and smoke-tested the template snapshot directly with Godot headless startup
 - Confirmed Gate B is ready for review
+- Started Batch 3 and added `scripts/generate_project.py` as the project generation flow
+- Added a platform `make generate-project` helper target
+- Generated a sample student project locally at `apps/platformer-generated`
+- Confirmed the generated project has the required root contract:
+  - `AGENT.md`
+  - `README.md`
+  - `project.kit.json`
+  - `Makefile`
+  - `project.godot`
+  - `.gitignore`
+- Confirmed the generated project copies the reduced `core/` contract and the distilled `kit/` contract without `templates/` or `reference/`
+- Confirmed the generated project includes seeded `state/`, `specs/`, `tools/`, `docs/`, `scripts/`, and `tests/unit/`
+- Confirmed the generated project initializes its own Git repo and `make setup-hooks` succeeds there
+- Confirmed the generated project workflow file parses as valid YAML
+- Confirmed Gate C is ready for review
 
 ## Handoff Note
 
-Batch 2 is complete and waiting at Gate B. Do not start Batch 3 until approval is given.
+Batch 3 is complete and waiting at Gate C. Do not start Batch 4 until approval is given.

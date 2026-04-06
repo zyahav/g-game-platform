@@ -39,16 +39,28 @@
   - multi-file acceptance docs
   - runnable template snapshot
   - authoring reference notes
+- Complete Batch 3 generation work:
+  - generator script
+  - generated root files
+  - copied `core/`
+  - copied distilled `kit/`
+  - seeded state/specs/tools/docs/tests
+  - generated project CI and hooks
 
 ## In Progress
 
-- Hold at Gate B for PM approval before Batch 3
+- Hold at Gate C for PM approval before Batch 4
 
 ## Next
 
-- Build the generation flow and generated-project contract
-- Make generation copy the reduced `core/` contract and distilled `platformer` kit into a new project output
-- Seed the generated project with root files, state files, specs, docs, tooling, and tests
+- Verify the generated project's runtime commands:
+  - `make play`
+  - `make smoke`
+  - `make test`
+  - `make verify`
+  - `make setup-hooks`
+  - `make editor`
+- Verify cold-start and ongoing-session `AGENT.md` behavior on the generated project
 - Revisit the direct local `scripts/ci/verify.sh` crash if it still reproduces once Batch 2 begins
 
 ## Blocked

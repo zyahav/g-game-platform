@@ -9,8 +9,10 @@ GH_BIN ?= /opt/homebrew/bin/gh
 PROJECT_ROOT := $(CURDIR)
 PROJECT_NAME ?= $(notdir $(PROJECT_ROOT))
 NPX ?= npx
+KIT ?= platformer
+OUTPUT_DIR ?= apps/$(KIT)-generated
 
-.PHONY: help check-env git-status gh-version gh-auth gh-create-private gh-push-main godot-version godot-import godot-smoke gut-test godot-editor editor smoke test setup-hooks verify play forge-help
+.PHONY: help check-env git-status gh-version gh-auth gh-create-private gh-push-main godot-version godot-import godot-smoke gut-test godot-editor editor smoke test setup-hooks verify play forge-help generate-project
 
 help:
 	@echo "Available targets:"
@@ -32,6 +34,7 @@ help:
 	@echo "  make godot-editor  - launch the Godot editor for this project"
 	@echo "  make play          - run preflight, then launch the game directly"
 	@echo "  make forge-help    - smoke-test Godot Forge availability via npx"
+	@echo "  make generate-project KIT=name OUTPUT_DIR=path - generate a student project from a kit"
 
 check-env:
 	@echo "git: $$(git --version)"
@@ -89,6 +92,9 @@ godot-editor:
 
 play: verify
 	@$(GODOT_BIN) --path "$(PROJECT_ROOT)"
+
+generate-project:
+	@python3 scripts/generate_project.py --kit "$(KIT)" --output "$(OUTPUT_DIR)"
 
 forge-help:
 	@$(NPX) -y godot-forge --help
