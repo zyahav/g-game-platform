@@ -1,0 +1,17 @@
+{
+  "kit_id": "platformer",
+  "kit_name": "2D Platformer",
+  "version": "1.0.0",
+  "description": "A proven Godot 4 side-view platformer starter with movement, collectibles, hazards, checkpoints, HUD, and win/lose flow.",
+  "engine": {
+    "name": "godot",
+    "version": "4.6"
+  },
+  "core_compatibility": {
+    "min_version": "1.0.0"
+  },
+  "checks": {
+    "smoke": "make smoke",
+    "test": "make test"
+  }
+}

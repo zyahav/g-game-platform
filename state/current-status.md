@@ -2,14 +2,14 @@
 
 ## Stage
 
-Platform build, Batch 1 complete
+Platform build, Batch 2 complete
 
 ## Implementation Tracker
 
-- Current batch: Batch 1
-- Current step: 11
-- Last completed step: 10
-- Gate status: Gate A ready for review
+- Current batch: Batch 2
+- Current step: 20
+- Last completed step: 19
+- Gate status: Gate B ready for review
 
 ## Summary
 
@@ -38,19 +38,21 @@ The repo currently has:
 - Platform skeleton folders for `kits/`, `templates/`, `docs/`, and `.github/workflows/`
 - Platform hook and CI scripts under `scripts/hooks/` and `scripts/ci/`
 - Platform-standard `Makefile` aliases: `make test`, `make smoke`, `make editor`, and `make setup-hooks`
+- A first extracted `platformer` kit under `kits/platformer/`
+- Distilled platformer kit specs, skills, acceptance docs, templates, and reference notes based on the working game
+- A runnable kit template snapshot that smoke-tests successfully in isolation
 
 ## Last Known Working Direction
 
-- Hold at Gate A for PM approval before starting Batch 2
-- Extract the first published kit from the existing proven working game instead of inventing it from theory
-- Keep the current game runnable while the platform skeleton is being layered in
-- Use the new platform `Makefile` aliases as the contract that future generated projects should inherit
-- Treat `make verify` as the game handoff gate and `scripts/ci/verify.sh` as the platform CI entrypoint to revisit in later gates
+- Hold at Gate B for PM approval before starting project generation
+- Use the extracted `platformer` kit as the source for generated project files in Batch 3
+- Keep generation aligned with the copied `core/` contract and the distilled kit contract
+- Preserve the current game as the proven source behind future kit changes
 
 ## Known Gaps
 
-- Batch 2 kit extraction has not started yet
-- The platform repo still contains the current game because the first kit has not been distilled out yet
+- Project generation has not started yet
+- The platform repo still contains the current game because the first generated-project flow has not been built yet
 - Direct local invocation of `scripts/ci/verify.sh` currently crashes inside Godot's headless logging path in this Codex sandbox even though `make test` and `make smoke` both pass on their own
 - Web export templates are still not fully installed
 - Automated coverage is still small even though `GUT` is installed and running
@@ -60,6 +62,8 @@ The repo currently has:
 - `make test` passes through the new platform-standard alias
 - `make smoke` passes through the new platform-standard alias
 - `make setup-hooks` installs the new `scripts/hooks/pre-commit.sh` symlink successfully
+- `kits/platformer/kit.manifest.json` validates as JSON
+- `kits/platformer/templates/` smoke-tests successfully with Godot headless startup
 - The current `GUT` suite still passes with:
   - 2 test scripts
   - 16 tests
@@ -67,7 +71,7 @@ The repo currently has:
 
 ## Resume Here
 
-1. Review Gate A and approve or reject Batch 1
-2. If approved, start Batch 2 and extract the first kit from the existing working game
-3. Preserve the current game as the proven source for kit specs, acceptance, templates, and seeded tests
+1. Review Gate B and approve or reject Batch 2
+2. If approved, start Batch 3 and build project generation from the extracted `platformer` kit
+3. Keep generated-project output aligned with the agreed root contract and cold-start/ongoing-session rules
 4. Revisit the direct `scripts/ci/verify.sh` crash before later CI-focused gates if it persists

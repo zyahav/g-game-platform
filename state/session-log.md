@@ -59,7 +59,16 @@
 - Added `.github/workflows/verify.yml`
 - Verified the new hook script, hook installation, YAML validity, `make test`, and `make smoke`
 - Confirmed Gate A is ready for review, with one extra non-gate note: direct local `./scripts/ci/verify.sh` currently crashes inside Godot's headless logging path in this Codex sandbox even though `make test` and `make smoke` pass when run independently
+- Started Batch 2 and extracted the first `platformer` kit from the existing working game instead of inventing it from scratch
+- Added `kits/platformer/kit.manifest.json`, `KIT.md`, and `AGENT_RULES.md`
+- Added distilled platformer feature specs for the core loop, collectibles/HUD, and progression/recovery
+- Added distilled platformer skills for movement/state flow, collectibles/HUD, and progression safety
+- Added multi-file acceptance docs using the agreed four-field contract
+- Added a runnable template snapshot under `kits/platformer/templates/` by copying the proven starter game's real project files, assets, scenes, and scripts
+- Added authoring reference notes under `kits/platformer/reference/`
+- Verified the kit manifest as valid JSON and smoke-tested the template snapshot directly with Godot headless startup
+- Confirmed Gate B is ready for review
 
 ## Handoff Note
 
-Batch 1 is complete and waiting at Gate A. Do not start Batch 2 until approval is given.
+Batch 2 is complete and waiting at Gate B. Do not start Batch 3 until approval is given.

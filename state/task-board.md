@@ -31,17 +31,24 @@
   - `Makefile` platform aliases
   - GitHub Actions verification workflow
 - Verify Gate A requirements except for the final clean-commit checkpoint
+- Complete Batch 2 first-kit extraction work:
+  - `kits/platformer/` manifest
+  - kit overview and agent rules
+  - distilled feature specs
+  - distilled skills
+  - multi-file acceptance docs
+  - runnable template snapshot
+  - authoring reference notes
 
 ## In Progress
 
-- Hold at Gate A for PM approval before Batch 2
-- Preserve the current game as the source material for the first extracted kit
+- Hold at Gate B for PM approval before Batch 3
 
 ## Next
 
-- Extract the first kit from the proven working game
-- Author the first kit manifest, kit rules, seeded specs, acceptance, templates, and reference material
 - Build the generation flow and generated-project contract
+- Make generation copy the reduced `core/` contract and distilled `platformer` kit into a new project output
+- Seed the generated project with root files, state files, specs, docs, tooling, and tests
 - Revisit the direct local `scripts/ci/verify.sh` crash if it still reproduces once Batch 2 begins
 
 ## Blocked

@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/hazards/spike_hazard.gd" id="1_spike_script"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_spikes"]
+size = Vector2(92, 18)
+
+[node name="SpikeHazard" type="Area2D"]
+script = ExtResource("1_spike_script")
+monitorable = false
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+color = Color(0.870588, 0.254902, 0.203922, 1)
+polygon = PackedVector2Array(-46, 8, -38, -10, -30, 8, -22, -10, -14, 8, -6, -10, 2, 8, 10, -10, 18, 8, 26, -10, 34, 8, 42, -10, 50, 8, 50, 12, -46, 12)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(2, 3)
+shape = SubResource("RectangleShape2D_spikes")
