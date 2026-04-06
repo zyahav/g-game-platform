@@ -91,7 +91,17 @@
 - Regenerated a clean verification sample at `apps/platformer-generated-clean`
 - Re-ran the generated-project runtime checks successfully against the clean sample
 - Confirmed Gate D is ready for review
+- Started Batch 5 startup-flow and enforcement verification
+- Added a platform and generated-project `make ci-verify` target so CI can run the full verification gate through a direct `make` entrypoint
+- Switched both GitHub workflows to run `make ci-verify` instead of shell-wrapping verification
+- Tightened generated `AGENT.md` so cold-start mode names the exact template markers that distinguish it from ongoing-session mode
+- Verified on a fresh generated sample that `make verify` and `make ci-verify` both pass
+- Verified the generated pre-commit hook blocks a staged `FIXME` in `.gd` files
+- Found and fixed a generator bug where generated CI incorrectly excluded gameplay `scripts/` from the `FIXME` scan
+- Verified the corrected generated CI now fails as expected when `scripts/player.gd` contains an intentional `FIXME`
+- Generated fresh Gate E samples at `apps/platformer-generated-gatee2` and `apps/platformer-generated-gatee3`
+- Confirmed Gate E is ready for review
 
 ## Handoff Note
 
-Batch 4 is complete and waiting at Gate D. Do not start Batch 5 until approval is given.
+Batch 5 is complete and waiting at Gate E. Do not start post-platform work until approval is given.

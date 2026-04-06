@@ -12,7 +12,7 @@ NPX ?= npx
 KIT ?= platformer
 OUTPUT_DIR ?= apps/$(KIT)-generated
 
-.PHONY: help check-env git-status gh-version gh-auth gh-create-private gh-push-main godot-version godot-import godot-smoke gut-test godot-editor editor smoke test setup-hooks verify play forge-help generate-project
+.PHONY: help check-env git-status gh-version gh-auth gh-create-private gh-push-main godot-version godot-import godot-smoke gut-test godot-editor editor smoke test ci-verify setup-hooks verify play forge-help generate-project
 
 help:
 	@echo "Available targets:"
@@ -28,6 +28,7 @@ help:
 	@echo "  make gut-test      - run the current automated GUT test suite"
 	@echo "  make smoke         - platform-standard alias for the headless startup check"
 	@echo "  make test          - platform-standard alias for the automated test suite"
+	@echo "  make ci-verify     - CI-facing verification gate including FIXME enforcement"
 	@echo "  make setup-hooks   - install the local pre-commit hook"
 	@echo "  make verify        - run the required preflight before handing work to a human"
 	@echo "  make editor        - platform-standard alias for opening the Godot editor"
@@ -76,6 +77,19 @@ gut-test: godot-import
 test: gut-test
 
 smoke: godot-smoke
+
+ci-verify: test smoke
+	@echo "[ci] Checking for FIXME markers..."
+	@if grep -R "FIXME" . \
+		--include="*.gd" \
+		--exclude-dir=".git" \
+		--exclude-dir="node_modules" \
+		--exclude-dir="scripts" \
+		--exclude-dir="templates"; then \
+		echo "[ci] ❌ FIXME found in gameplay files"; \
+		exit 1; \
+	fi
+	@echo "[ci] ✅ Full verification passed."
 
 setup-hooks:
 	@chmod +x scripts/hooks/pre-commit.sh

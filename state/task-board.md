@@ -54,17 +54,21 @@
   - `make setup-hooks`
   - `make editor`
   - generator cleanup for stale UID warnings
+- Complete Batch 5 startup-flow and enforcement work:
+  - explicit cold-start vs ongoing markers in generated `AGENT.md`
+  - generated `make ci-verify` target
+  - generated CI workflow wired to `make ci-verify`
+  - verified hook rejection on staged `FIXME`
+  - verified CI failure on intentional gameplay `FIXME`
 
 ## In Progress
 
-- Hold at Gate D for PM approval before Batch 5
+- Hold at Gate E for PM approval and end-to-end sign-off
 
 ## Next
 
-- Verify cold-start and ongoing-session `AGENT.md` behavior on the generated project
-- Check that the generated project's pre-commit hook blocks `FIXME` in `.gd` files
-- Check that generated-project CI passes clean and fails on intentional `FIXME`
-- Revisit the direct local `scripts/ci/verify.sh` crash if it still reproduces once Batch 2 begins
+- Decide whether to keep `scripts/ci/verify.sh` as a legacy helper or replace it with a documented pointer to `make ci-verify`
+- If Gate E is approved, plan the first post-platform feature batch on top of the generated-project contract
 
 ## Blocked
 

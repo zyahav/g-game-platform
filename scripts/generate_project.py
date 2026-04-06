@@ -116,7 +116,12 @@ This is a generated student project based on the `{manifest["kit_id"]}` kit.
 
 ## Cold Start Mode
 
-Use cold start when `state/current-status.md` is missing or still template-empty.
+Use cold start when `state/current-status.md` is missing, or when it still reflects the generated template state.
+
+Cold-start markers include:
+
+- `## Stage` is `Freshly generated project`
+- `## Known Gaps` still says `State files are still in template form`
 
 1. Read `project.kit.json`.
 2. Read `core/`.
@@ -126,7 +131,7 @@ Use cold start when `state/current-status.md` is missing or still template-empty
 
 ## Ongoing Session Mode
 
-Use ongoing-session mode when the project already has real state.
+Use ongoing-session mode when the project already has real project state and the cold-start markers above have been replaced.
 
 1. Read `project.kit.json`.
 2. Read `state/`.
@@ -193,7 +198,7 @@ GODOT_BIN := /Applications/Godot.app/Contents/MacOS/Godot
 endif
 PROJECT_ROOT := $(CURDIR)
 
-.PHONY: smoke test verify play editor setup-hooks
+.PHONY: smoke test ci-verify verify play editor setup-hooks
 
 smoke:
 \t@$(GODOT_BIN) --headless --path "$(PROJECT_ROOT)" --editor --quit-after 1
@@ -201,6 +206,17 @@ smoke:
 test:
 \t@$(GODOT_BIN) --headless --path "$(PROJECT_ROOT)" --import --quit
 \t@$(GODOT_BIN) --headless -d -s --path "$(PROJECT_ROOT)" addons/gut/gut_cmdln.gd -gconfig=res://.gutconfig.json -gexit
+
+ci-verify: test smoke
+\t@echo "[ci] Checking for FIXME markers..."
+\t@if grep -R "FIXME" . \\
+\t\t--include="*.gd" \\
+\t\t--exclude-dir=".git" \\
+\t\t--exclude-dir="node_modules"; then \\
+\t\techo "[ci] ❌ FIXME found in gameplay files"; \\
+\t\texit 1; \\
+\tfi
+\t@echo "[ci] ✅ Full verification passed."
 
 verify: test smoke
 \t@echo "Verification passed."
@@ -468,6 +484,7 @@ Use these commands during development:
 
 - `make smoke` — headless startup check
 - `make test` — automated test suite
+- `make ci-verify` — CI-facing verification including FIXME enforcement
 - `make verify` — required gate before handoff
 - `make play` — run the game
 - `make editor` — open the project in Godot
@@ -505,9 +522,7 @@ jobs:
         run: brew install godot
 
       - name: Run verification
-        run: |
-          chmod +x scripts/ci/verify.sh
-          ./scripts/ci/verify.sh
+        run: make ci-verify
 """,
     )
 
