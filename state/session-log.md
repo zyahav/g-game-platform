@@ -50,7 +50,16 @@
 - Added a repo-level hard handoff gate: no human playback after runtime changes unless parse/load, tests, and smoke startup are green
 - Explicitly documented that blocked verification is not verified
 - Explicitly documented that debug instrumentation follows the same handoff gate as production changes
+- Started Batch 1 of the platform build on branch `codex/platform-v4-build`
+- Added the root platform `AGENT.md` with setup/install mode instructions
+- Added the platform `core/` contract and initial docs under `core/agent-rules/`, `core/workflow/`, `core/verification/`, and `core/protocols/`
+- Added the top-level platform skeleton directories: `kits/`, `templates/`, `docs/`, and `.github/workflows/`
+- Added `scripts/hooks/pre-commit.sh` and `scripts/ci/verify.sh`
+- Extended the root `Makefile` with `make test`, `make smoke`, `make editor`, and `make setup-hooks`
+- Added `.github/workflows/verify.yml`
+- Verified the new hook script, hook installation, YAML validity, `make test`, and `make smoke`
+- Confirmed Gate A is ready for review, with one extra non-gate note: direct local `./scripts/ci/verify.sh` currently crashes inside Godot's headless logging path in this Codex sandbox even though `make test` and `make smoke` pass when run independently
 
 ## Handoff Note
 
-The latest coin/HUD/audio integration was completed from file edits and should be verified in Godot on next open.
+Batch 1 is complete and waiting at Gate A. Do not start Batch 2 until approval is given.

@@ -1,0 +1,21 @@
+name: Verify
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  verify:
+    runs-on: macos-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install Godot
+        run: brew install godot
+
+      - name: Run verification
+        run: |
+          chmod +x scripts/ci/verify.sh
+          ./scripts/ci/verify.sh

@@ -23,23 +23,26 @@
 - Add reusable checkpoints with saved progress and automated coverage
 - Add safe checkpoint respawn invariants and automated death-loop prevention coverage
 - Add a formal discussion-first protocol for system/rule/skill upgrades
+- Complete Batch 1 platform skeleton work:
+  - root `AGENT.md`
+  - `core/` contract and docs
+  - platform folder skeleton
+  - hook and CI scripts
+  - `Makefile` platform aliases
+  - GitHub Actions verification workflow
+- Verify Gate A requirements except for the final clean-commit checkpoint
 
 ## In Progress
 
-- Verify latest HUD, coin, and sound changes inside Godot
-- Verify the new environment-driven scene and cloud motion inside Godot
-- Set up reliable web export workflow
-- Begin gradual evaluation of Godot dev tooling from `tools/godot-agent-tooling-registry.md`
+- Hold at Gate A for PM approval before Batch 2
+- Preserve the current game as the source material for the first extracted kit
 
 ## Next
 
-- Add better review and verification routine
-- Deepen the `Godot Forge` trial beyond the current smoke test
-- Trial `GDScript Toolkit`
-- Expand `GUT` coverage to future hazards/checkpoints and scene progression
-- Add the next sophistication pass: richer level progression or another checkpoint
-- Document browser export steps in-project
-- Consider adding a second checkpoint or a second section of the level
+- Extract the first kit from the proven working game
+- Author the first kit manifest, kit rules, seeded specs, acceptance, templates, and reference material
+- Build the generation flow and generated-project contract
+- Revisit the direct local `scripts/ci/verify.sh` crash if it still reproduces once Batch 2 begins
 
 ## Blocked
 
