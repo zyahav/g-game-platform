@@ -50,7 +50,61 @@
 - Added a repo-level hard handoff gate: no human playback after runtime changes unless parse/load, tests, and smoke startup are green
 - Explicitly documented that blocked verification is not verified
 - Explicitly documented that debug instrumentation follows the same handoff gate as production changes
+- Started Batch 1 of the platform build on branch `codex/platform-v4-build`
+- Added the root platform `AGENT.md` with setup/install mode instructions
+- Added the platform `core/` contract and initial docs under `core/agent-rules/`, `core/workflow/`, `core/verification/`, and `core/protocols/`
+- Added the top-level platform skeleton directories: `kits/`, `templates/`, `docs/`, and `.github/workflows/`
+- Added `scripts/hooks/pre-commit.sh` and `scripts/ci/verify.sh`
+- Extended the root `Makefile` with `make test`, `make smoke`, `make editor`, and `make setup-hooks`
+- Added `.github/workflows/verify.yml`
+- Verified the new hook script, hook installation, YAML validity, `make test`, and `make smoke`
+- Confirmed Gate A is ready for review, with one extra non-gate note: direct local `./scripts/ci/verify.sh` currently crashes inside Godot's headless logging path in this Codex sandbox even though `make test` and `make smoke` pass when run independently
+- Started Batch 2 and extracted the first `platformer` kit from the existing working game instead of inventing it from scratch
+- Added `kits/platformer/kit.manifest.json`, `KIT.md`, and `AGENT_RULES.md`
+- Added distilled platformer feature specs for the core loop, collectibles/HUD, and progression/recovery
+- Added distilled platformer skills for movement/state flow, collectibles/HUD, and progression safety
+- Added multi-file acceptance docs using the agreed four-field contract
+- Added a runnable template snapshot under `kits/platformer/templates/` by copying the proven starter game's real project files, assets, scenes, and scripts
+- Added authoring reference notes under `kits/platformer/reference/`
+- Verified the kit manifest as valid JSON and smoke-tested the template snapshot directly with Godot headless startup
+- Confirmed Gate B is ready for review
+- Started Batch 3 and added `scripts/generate_project.py` as the project generation flow
+- Added a platform `make generate-project` helper target
+- Generated a sample student project locally at `apps/platformer-generated`
+- Confirmed the generated project has the required root contract:
+  - `AGENT.md`
+  - `README.md`
+  - `project.kit.json`
+  - `Makefile`
+  - `project.godot`
+  - `.gitignore`
+- Confirmed the generated project copies the reduced `core/` contract and the distilled `kit/` contract without `templates/` or `reference/`
+- Confirmed the generated project includes seeded `state/`, `specs/`, `tools/`, `docs/`, `scripts/`, and `tests/unit/`
+- Confirmed the generated project initializes its own Git repo and `make setup-hooks` succeeds there
+- Confirmed the generated project workflow file parses as valid YAML
+- Confirmed Gate C is ready for review
+- Started Batch 4 runtime verification on the generated project
+- Verified `make setup-hooks`, `make smoke`, `make test`, and `make verify` inside the generated project
+- Verified `make play` opens the generated game and reaches a live runtime session
+- Verified `make editor` opens the generated project in the Godot editor
+- Tightened the generator to strip stale source-resource UIDs from generated scenes so the generated project no longer logs invalid UID fallback warnings on startup
+- Regenerated a clean verification sample at `apps/platformer-generated-clean`
+- Re-ran the generated-project runtime checks successfully against the clean sample
+- Confirmed Gate D is ready for review
+- Started Batch 5 startup-flow and enforcement verification
+- Added a platform and generated-project `make ci-verify` target so CI can run the full verification gate through a direct `make` entrypoint
+- Switched both GitHub workflows to run `make ci-verify` instead of shell-wrapping verification
+- Tightened generated `AGENT.md` so cold-start mode names the exact template markers that distinguish it from ongoing-session mode
+- Verified on a fresh generated sample that `make verify` and `make ci-verify` both pass
+- Verified the generated pre-commit hook blocks a staged `FIXME` in `.gd` files
+- Found and fixed a generator bug where generated CI incorrectly excluded gameplay `scripts/` from the `FIXME` scan
+- Verified the corrected generated CI now fails as expected when `scripts/player.gd` contains an intentional `FIXME`
+- Generated fresh Gate E samples at `apps/platformer-generated-gatee2` and `apps/platformer-generated-gatee3`
+- Confirmed Gate E is ready for review
+- Verified the real Codex CLI student-install flow from `/Users/zyahav/Documents/dev/codex-e2e-test`
+- Confirmed `codex exec --skip-git-repo-check --full-auto` can read the platform `AGENT.md`, generate `student-project`, and switch into it without modifying the platform source repo
+- Confirmed generated-project verification passes from Codex CLI when Godot uses a workspace-local `HOME`, `XDG_DATA_HOME`, and `XDG_CONFIG_HOME`
 
 ## Handoff Note
 
-The latest coin/HUD/audio integration was completed from file edits and should be verified in Godot on next open.
+Batch 5 is complete and waiting at Gate E. Do not start post-platform work until approval is given.

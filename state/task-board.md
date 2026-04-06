@@ -23,23 +23,52 @@
 - Add reusable checkpoints with saved progress and automated coverage
 - Add safe checkpoint respawn invariants and automated death-loop prevention coverage
 - Add a formal discussion-first protocol for system/rule/skill upgrades
+- Complete Batch 1 platform skeleton work:
+  - root `AGENT.md`
+  - `core/` contract and docs
+  - platform folder skeleton
+  - hook and CI scripts
+  - `Makefile` platform aliases
+  - GitHub Actions verification workflow
+- Verify Gate A requirements except for the final clean-commit checkpoint
+- Complete Batch 2 first-kit extraction work:
+  - `kits/platformer/` manifest
+  - kit overview and agent rules
+  - distilled feature specs
+  - distilled skills
+  - multi-file acceptance docs
+  - runnable template snapshot
+  - authoring reference notes
+- Complete Batch 3 generation work:
+  - generator script
+  - generated root files
+  - copied `core/`
+  - copied distilled `kit/`
+  - seeded state/specs/tools/docs/tests
+  - generated project CI and hooks
+- Complete Batch 4 runtime verification work:
+  - `make play`
+  - `make smoke`
+  - `make test`
+  - `make verify`
+  - `make setup-hooks`
+  - `make editor`
+  - generator cleanup for stale UID warnings
+- Complete Batch 5 startup-flow and enforcement work:
+  - explicit cold-start vs ongoing markers in generated `AGENT.md`
+  - generated `make ci-verify` target
+  - generated CI workflow wired to `make ci-verify`
+  - verified hook rejection on staged `FIXME`
+  - verified CI failure on intentional gameplay `FIXME`
 
 ## In Progress
 
-- Verify latest HUD, coin, and sound changes inside Godot
-- Verify the new environment-driven scene and cloud motion inside Godot
-- Set up reliable web export workflow
-- Begin gradual evaluation of Godot dev tooling from `tools/godot-agent-tooling-registry.md`
+- Hold at Gate E for PM approval and end-to-end sign-off
 
 ## Next
 
-- Add better review and verification routine
-- Deepen the `Godot Forge` trial beyond the current smoke test
-- Trial `GDScript Toolkit`
-- Expand `GUT` coverage to future hazards/checkpoints and scene progression
-- Add the next sophistication pass: richer level progression or another checkpoint
-- Document browser export steps in-project
-- Consider adding a second checkpoint or a second section of the level
+- Decide whether to keep `scripts/ci/verify.sh` as a legacy helper or replace it with a documented pointer to `make ci-verify`
+- If Gate E is approved, plan the first post-platform feature batch on top of the generated-project contract
 
 ## Blocked
 

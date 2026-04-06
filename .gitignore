@@ -7,3 +7,7 @@
 
 # Local generated project workspace
 apps/
+
+# Python cache
+__pycache__/
+*.pyc
