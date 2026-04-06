@@ -5,8 +5,15 @@ Run this checklist after implementing a meaningful feature or refactor.
 ## Required Gate Before Human Playback
 
 - Run `make verify` before asking a human to play or inspect the game
+- Treat any runtime-affecting change as gate-worthy, including debug instrumentation, temporary logging, scene edits, and config edits
+- Require:
+  - parse/load success
+  - test suite passing
+  - smoke startup success
 - If `make verify` fails, fix the issue first or state the blocker clearly
-- If `make verify` cannot be run, say that explicitly before handing off
+- If `make verify` cannot be run or complete, say that explicitly and do not hand off the build as runnable
+- Blocked verification is not verified
+- The user should validate behavior, not parser/smoke-test stability
 
 ## Files
 
@@ -45,6 +52,7 @@ Run this checklist after implementing a meaningful feature or refactor.
 - State what was tested
 - State what could not be tested from the current session
 - State whether `make verify` passed
+- State clearly if the build is not ready for human execution
 - Add follow-up tasks if verification is blocked
 
 ## Handoff

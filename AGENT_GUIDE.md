@@ -36,6 +36,30 @@ Use the reusable framework in `packages/game-agent/` as support material, not as
 - Reusable gameplay elements should live in dedicated scenes and scripts.
 - Use the package workflow only if it helps; do not let framework ceremony block shipping the game.
 
+## System Upgrade Protocol
+
+Changes to the agent system itself must follow a discussion-first workflow.
+
+This includes changes to:
+
+- repo rules
+- reusable skills
+- workflow policies
+- verification standards
+- reusable package structure
+
+Protocol:
+
+1. Observe the problem or missing capability
+2. Discuss the design and extract the reusable lesson
+3. Agree on the operating model, invariant, or workflow change
+4. Only then update repo docs, skills, or package structure
+5. After adoption, treat the new rule as the source of truth
+
+Do not upgrade the system from the first implementation pass.
+Do not silently rewrite rules, skills, or process based only on one bug or one local fix.
+System changes must be deliberate, explicit, and adopted before implementation.
+
 ## Folder Structure
 
 - `assets/audio/sfx/` for sound effects
@@ -67,6 +91,24 @@ Use the reusable framework in `packages/game-agent/` as support material, not as
 - Use `state/verification-checklist.md` before closing a significant task.
 - If a session evaluates external tooling, update `tools/godot-agent-tooling-registry.md`.
 - Before handing a change to a human for playback, run `make verify` or state clearly why that could not be done.
+
+## Handoff Gate
+
+No human handoff is allowed until the changed build is green again.
+
+For any runtime-affecting change, including debug instrumentation, scene edits, config edits, or temporary logging:
+
+- parse/load must succeed
+- automated tests must pass
+- smoke startup must succeed
+
+Rules:
+
+- blocked verification is not verified
+- debug changes follow the same gate as production changes
+- if the gate is not green, do not ask the user to run the game
+- if verification cannot complete, state clearly that the build is not ready for user execution
+- the user validates behavior, not build stability
 
 ## Gameplay Invariants
 

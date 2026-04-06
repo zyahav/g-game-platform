@@ -1,3 +1,9 @@
 # Godot 4+ specific ignores
 .godot/
 /android/
+
+# OS/editor junk
+.DS_Store
+
+# Local generated project workspace
+apps/

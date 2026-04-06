@@ -24,6 +24,8 @@ The game currently has:
 - A `make verify` preflight gate before human playback
 - A working `GUT` test setup wired into `make verify`
 - Documented gameplay invariants for safe respawn behavior
+- A discussion-first protocol for changing repo rules, skills, and workflow
+- A hard handoff gate that requires green verification before user execution
 
 ## Last Known Working Direction
 
@@ -32,6 +34,8 @@ The game currently has:
 - Use `Makefile` targets as the default local command entry point
 - Treat `make verify` as the minimum gate before asking the user to play a change
 - Treat checkpoint respawn as a validated safe state, not just a saved coordinate
+- Treat system/rule/skill changes as discussion-first policy decisions before implementation
+- Treat blocked verification as not verified, and do not hand runtime changes to the user unless the gate is green
 - Continue polishing the new environment-driven level presentation in steps
 - Use `SESSION_START.md` and root `state/` files as the primary session handoff path
 - Set up web export once Godot export templates are installed
@@ -58,7 +62,7 @@ The current `GUT` suite passes with:
 
 - 2 test scripts
 - 16 tests
-- 70 assertions
+- 72 assertions
 
 ## Resume Here
 

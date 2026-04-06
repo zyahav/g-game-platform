@@ -43,6 +43,13 @@
 - Fixed `make godot-editor` so it opens the editor UI instead of running the game scene
 - Fixed the lose overlay so spike deaths and fall deaths show different messages
 - Expanded automated coverage for death messaging and confirmed `make verify` now passes with 16 tests and 70 assertions
+- Added a repo-level discussion-first protocol for changing system rules, reusable skills, and workflow policy
+
+## 2026-04-06
+
+- Added a repo-level hard handoff gate: no human playback after runtime changes unless parse/load, tests, and smoke startup are green
+- Explicitly documented that blocked verification is not verified
+- Explicitly documented that debug instrumentation follows the same handoff gate as production changes
 
 ## Handoff Note
 

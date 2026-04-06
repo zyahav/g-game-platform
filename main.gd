@@ -18,6 +18,7 @@ enum LoseReason {
 @export var cloud_wrap_width := 2200.0
 @export var respawn_ground_check_distance := 120.0
 @export var respawn_surface_margin := 1.0
+@export var debug_spawn_validation := true
 
 @onready var player: CharacterBody2D = $Player
 @onready var spawn_point: Marker2D = $SpawnPoint
@@ -203,7 +204,13 @@ func _on_checkpoint_activated(checkpoint: Area2D) -> void:
 
 	checkpoint.activate()
 	has_checkpoint = true
-	respawn_position = _find_safe_respawn_position(checkpoint.get_respawn_position())
+	var checkpoint_position: Vector2 = checkpoint.get_respawn_position()
+	respawn_position = _find_safe_respawn_position(checkpoint_position)
+	_debug_spawn("checkpoint activated", {
+		"checkpoint": checkpoint.name,
+		"candidate": checkpoint_position,
+		"final_respawn": respawn_position,
+	})
 	checkpoint_score = score
 	checkpoint_collected_coins = _get_collected_coin_names()
 
@@ -248,29 +255,60 @@ func _restore_checkpoint_coin_state() -> void:
 func _find_safe_respawn_position(preferred_position: Vector2) -> Vector2:
 	var preferred_safe_position := _safe_position_for(preferred_position)
 	if preferred_safe_position != Vector2.INF:
+		_debug_spawn("accepted preferred respawn", {
+			"candidate": preferred_position,
+			"respawn": preferred_safe_position,
+		})
 		return preferred_safe_position
 
 	var start_safe_position := _safe_position_for(initial_spawn_position)
 	if start_safe_position != Vector2.INF:
+		_debug_spawn("fallback to level start", {
+			"candidate": preferred_position,
+			"fallback": initial_spawn_position,
+			"respawn": start_safe_position,
+		})
 		return start_safe_position
 
+	_debug_spawn("forced raw level start fallback", {
+		"candidate": preferred_position,
+		"fallback": initial_spawn_position,
+	})
 	return initial_spawn_position
 
 
 func _safe_position_for(source_position: Vector2) -> Vector2:
 	var ground_hit := _find_ground_below(source_position)
 	if ground_hit.is_empty():
+		_debug_spawn("rejected spawn - no ground hit", {
+			"candidate": source_position,
+		})
 		return Vector2.INF
 
 	var candidate: Vector2 = ground_hit.position
 	candidate.y -= _get_player_floor_offset() + respawn_surface_margin
 
 	if _position_overlaps_hazard(candidate):
+		_debug_spawn("rejected spawn - hazard overlap", {
+			"candidate": source_position,
+			"resolved": candidate,
+			"ground_hit": ground_hit.position,
+		})
 		return Vector2.INF
 
 	if _position_overlaps_body(candidate):
+		_debug_spawn("rejected spawn - body overlap", {
+			"candidate": source_position,
+			"resolved": candidate,
+			"ground_hit": ground_hit.position,
+		})
 		return Vector2.INF
 
+	_debug_spawn("validated spawn candidate", {
+		"candidate": source_position,
+		"ground_hit": ground_hit.position,
+		"resolved": candidate,
+	})
 	return candidate
 
 
@@ -338,6 +376,13 @@ func _position_overlaps_body(candidate_position: Vector2) -> bool:
 	var collisions := space_state.intersect_shape(query)
 
 	return collisions.size() > 0
+
+
+func _debug_spawn(label: String, data: Dictionary) -> void:
+	if not debug_spawn_validation:
+		return
+
+	print("[spawn-debug] %s | %s" % [label, data])
 
 func _update_hud() -> void:
 	score_label.text = "Score: %d" % score

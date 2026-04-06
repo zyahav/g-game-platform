@@ -22,6 +22,7 @@
 - Add reusable spike hazards with automated coverage
 - Add reusable checkpoints with saved progress and automated coverage
 - Add safe checkpoint respawn invariants and automated death-loop prevention coverage
+- Add a formal discussion-first protocol for system/rule/skill upgrades
 
 ## In Progress
 

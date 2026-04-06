@@ -130,13 +130,15 @@ func test_checkpoint_activation_saves_progress_for_restart() -> void:
 	main_scene._start_game()
 	start_coin.collect()
 	await wait_process_frames(1)
-	main_scene._on_checkpoint_activated(checkpoint)
+	checkpoint._on_body_entered(main_scene.player)
+	await wait_process_frames(1)
 
 	assert_true(main_scene.has_checkpoint)
 	assert_eq(main_scene.checkpoint_score, 1)
 	assert_eq(main_scene.checkpoint_collected_coins, ["CoinStart"])
 	assert_true(main_scene._safe_position_for(checkpoint.get_respawn_position()) != Vector2.INF)
 	assert_eq(main_scene.respawn_position, main_scene._safe_position_for(checkpoint.get_respawn_position()))
+	assert_ne(main_scene.respawn_position, main_scene.spawn_point.global_position)
 
 
 func test_restart_after_checkpoint_restores_saved_progress() -> void:
@@ -149,7 +151,8 @@ func test_restart_after_checkpoint_restores_saved_progress() -> void:
 	main_scene._start_game()
 	start_coin.collect()
 	await wait_process_frames(1)
-	main_scene._on_checkpoint_activated(checkpoint)
+	checkpoint._on_body_entered(main_scene.player)
+	await wait_process_frames(1)
 	later_coin.collect()
 	await wait_process_frames(1)
 	main_scene._lose()
@@ -161,6 +164,7 @@ func test_restart_after_checkpoint_restores_saved_progress() -> void:
 	assert_eq(main_scene.score, 1)
 	assert_eq(main_scene.respawn_position, safe_checkpoint_position)
 	assert_almost_eq(main_scene.player.global_position, safe_checkpoint_position, Vector2(1.0, 1.0))
+	assert_ne(main_scene.player.global_position, main_scene.spawn_point.global_position)
 	assert_true(start_coin.is_collected)
 	assert_false(later_coin.is_collected)
 
@@ -173,7 +177,8 @@ func test_checkpoint_respawn_is_safe_without_input_for_half_second() -> void:
 	main_scene._start_game()
 	start_coin.collect()
 	await wait_process_frames(1)
-	main_scene._on_checkpoint_activated(checkpoint)
+	checkpoint._on_body_entered(main_scene.player)
+	await wait_process_frames(1)
 	main_scene._lose()
 	main_scene._restart_game()
 
@@ -192,7 +197,8 @@ func test_win_then_restart_starts_fresh_even_with_checkpoint() -> void:
 	main_scene._start_game()
 	start_coin.collect()
 	await wait_process_frames(1)
-	main_scene._on_checkpoint_activated(checkpoint)
+	checkpoint._on_body_entered(main_scene.player)
+	await wait_process_frames(1)
 	main_scene.score = main_scene.total_coins
 	main_scene._win()
 

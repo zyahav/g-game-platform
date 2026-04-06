@@ -8,6 +8,7 @@ size = Vector2(24, 48)
 [node name="Checkpoint" type="Area2D"]
 script = ExtResource("1_checkpoint_script")
 monitorable = false
+z_index = 10
 
 [node name="RespawnPoint" type="Marker2D" parent="."]
 position = Vector2(0, -34)
