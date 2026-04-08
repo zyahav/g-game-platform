@@ -10,11 +10,22 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 
+TEMP_SOURCE_DIRNAME = "._platform_source"
+TEMP_GENERATED_DIRNAME = "._generated"
+ROOT_IGNORE_NAMES = {".git", ".home", "__pycache__", TEMP_SOURCE_DIRNAME, TEMP_GENERATED_DIRNAME}
+SHARED_KAYA_FILES = ("Mission.md", "Soul.md", "Boundaries.md", "Playbook.md", "Lessons.md", "TTS.md")
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Generate a student project from a platform kit.")
     parser.add_argument("--kit", required=True, help="Kit id to generate from, for example 'platformer'")
     parser.add_argument("--output", required=True, help="Output directory for the generated project")
     parser.add_argument("--name", help="Optional generated project name")
+    parser.add_argument(
+        "--in-place-root",
+        action="store_true",
+        help="Allow destructive transformation of an existing non-empty platform root into the final generated project.",
+    )
     return parser.parse_args()
 
 
@@ -58,21 +69,259 @@ def ensure_git_repo(output_dir: Path) -> None:
     subprocess.run(["git", "init", "-b", "main", str(output_dir)], check=True)
 
 
-def main() -> None:
-    args = parse_args()
-    repo_root = Path(__file__).resolve().parent.parent
-    kit_root = repo_root / "kits" / args.kit
-    if not kit_root.exists():
-        raise SystemExit(f"Kit not found: {args.kit}")
+def remove_path(path: Path) -> None:
+    if not path.exists():
+        return
+    if path.is_dir() and not path.is_symlink():
+        shutil.rmtree(path)
+    else:
+        path.unlink()
 
-    manifest = json.loads((kit_root / "kit.manifest.json").read_text(encoding="utf-8"))
-    output_dir = Path(args.output).resolve()
-    if output_dir.exists():
-        raise SystemExit(f"Output directory already exists: {output_dir}")
 
-    project_name = args.name or f"{manifest['kit_name']} Starter"
-    generated_at = datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+def clear_directory(root: Path, keep_names: set[str] | None = None) -> None:
+    keep_names = keep_names or set()
+    if not root.exists():
+        return
+    for child in root.iterdir():
+        if child.name in keep_names:
+            continue
+        remove_path(child)
 
+
+def move_directory_contents(src_root: Path, dst_root: Path) -> None:
+    for child in list(src_root.iterdir()):
+        shutil.move(str(child), str(dst_root / child.name))
+
+
+def top_level_output_name(repo_root: Path, output_root: Path) -> str | None:
+    try:
+        relative = output_root.relative_to(repo_root)
+    except ValueError:
+        return None
+    if not relative.parts:
+        return None
+    return relative.parts[0]
+
+
+def copy_repo_snapshot(src_root: Path, dst_root: Path, *, exclude_top_level: str | None = None) -> None:
+    ignore_names = set(ROOT_IGNORE_NAMES)
+    if exclude_top_level:
+        ignore_names.add(exclude_top_level)
+
+    dst_root.mkdir(parents=True, exist_ok=False)
+    ignore_patterns = shutil.ignore_patterns(*sorted(ROOT_IGNORE_NAMES))
+
+    for child in src_root.iterdir():
+        if child.name in ignore_names:
+            continue
+        destination = dst_root / child.name
+        if child.is_dir() and not child.is_symlink():
+            shutil.copytree(child, destination, ignore=ignore_patterns)
+        else:
+            copy_file(child, destination)
+
+
+def cleanup_temp_roots(output_root: Path) -> None:
+    remove_path(output_root / TEMP_SOURCE_DIRNAME)
+    remove_path(output_root / TEMP_GENERATED_DIRNAME)
+
+
+def write_generated_project_readme(output_dir: Path, manifest: dict[str, object], project_name: str) -> None:
+    engine = manifest["engine"]["version"]  # type: ignore[index]
+    write_text(
+        output_dir / "README.md",
+        f"""# {project_name}
+
+Kit: `{manifest["kit_name"]}`
+
+{manifest["description"]}
+
+Engine: Godot {engine}
+
+## How To Start
+
+1. Open Codex in this folder
+2. Start a new chat
+3. Kaya will take it from there
+
+## Commands
+
+- `make doctor`
+- `make play`
+- `make test`
+- `make smoke`
+- `make ci-verify`
+- `make verify`
+- `make editor`
+- `make tts TTS_TEXT="Hello there"`
+- `make tts-test`
+
+If `make` is unavailable, use `python3 scripts/project_tasks.py <command>` instead.
+
+---
+
+## For The Agent Reading This File
+
+You are Thread 1 — the Coach.
+
+Read `learning/coach.md` now and follow it exactly.
+Do not read `AGENT.md` unless you are explicitly acting as the Dev thread.
+Do not improvise. Do not start teaching until you read `learning/coach.md`.
+""",
+    )
+
+
+def write_generated_project_learning_layer(repo_root: Path, output_dir: Path, manifest: dict[str, object]) -> None:
+    kit_id = str(manifest["kit_id"])
+    learning_root = output_dir / "learning"
+    kaya_root = learning_root / "kaya"
+
+    for filename in SHARED_KAYA_FILES:
+        copy_file(repo_root / "learning" / "kaya" / filename, kaya_root / filename)
+
+    lesson_spec = repo_root / "learning" / "lessons" / f"{kit_id}.md"
+    if lesson_spec.exists():
+        copy_file(lesson_spec, learning_root / "lessons" / lesson_spec.name)
+
+    write_text(
+        learning_root / "coach.md",
+        f"""# Coach — Generated Project Loader
+
+This file is the Thread 1 entry point for this generated project.
+
+When you read this file, you are Kaya.
+Read the files below in order. All of them. Then begin the session.
+
+---
+
+## Always Read (Every Session)
+
+1. `learning/kaya/Mission.md` — why you exist and what success looks like
+2. `learning/kaya/Soul.md` — your personality, voice, and how you talk
+3. `learning/kaya/Boundaries.md` — hard rules you never break
+4. `learning/kaya/Playbook.md` — how to handle specific situations
+5. `learning/kaya/TTS.md` — how to speak when voice is enabled
+
+Then read `state/student.md`.
+
+---
+
+## First Session Only
+
+If `state/student.md` does not exist or `sessions` is 0:
+
+6. `learning/kaya/Onboarding.md` — follow this for the first session in this generated project
+
+---
+
+## Ongoing Sessions
+
+If `state/student.md` exists and `sessions` is greater than 0:
+
+6. `learning/kaya/Lessons.md` — continue the lesson flow
+
+---
+
+## Chosen Kit Reference
+
+If `learning/lessons/{kit_id}.md` exists, read it as the chosen-kit lesson spec before guiding lesson-specific work.
+
+---
+
+## Do Not Read
+
+- `AGENT.md` — that is for the Dev thread only
+- `core/` — that is the engineering layer, not yours
+- Any file not listed above unless the student explicitly asks to inspect it
+
+---
+
+## After Reading
+
+You are Kaya. Begin the session.
+Do not summarize what you read. Do not explain the system.
+Just say hello.
+""",
+    )
+
+    write_text(
+        kaya_root / "Onboarding.md",
+        """# Kaya — Generated Project Onboarding
+
+This file is for the first student session in an already-generated project.
+The game already exists. Do not tell the student to clone or generate a new one.
+
+After the student has felt the game, switch to `Lessons.md`.
+
+## Step 1 — Introduction
+
+The very first thing Kaya says:
+
+> "Hi, I'm Kaya! What's your name?"
+
+Wait. Do not continue until they reply.
+
+## Step 2 — Save the Name
+
+After they give their name:
+- Save it to `state/student.md`
+- Use it immediately in the next message
+
+> "Nice to meet you, [name]! This project is already set up. We're going to build on top of it together. Ready?"
+
+## Step 3 — First Time Question
+
+> "Before we start — have you made a game before?
+> 1 — Never, this is new
+> 2 — A little, I've tried something
+> 3 — I know Godot already"
+
+This changes how much context Kaya gives, not what lessons to skip.
+
+## Step 4 — Start With The Game
+
+Move immediately to `Lessons.md`, Lesson 1 — First Wow.
+
+If the student hits a tooling blocker before they can run the game, introduce the Dev thread with this message:
+
+```
+--- START: PM TO DEV ---
+This project is already generated.
+Read AGENT.md.
+Run `make doctor` or `python3 scripts/project_tasks.py doctor` first.
+Repair any environment issues automatically before asking the student to do technical setup.
+Report back when the game is ready to run.
+--- END: PM TO DEV ---
+```
+
+Do not ask the student to troubleshoot environment issues manually before the Dev has tried to repair them.
+""",
+    )
+
+    write_text(
+        output_dir / "state" / "student.md",
+        """# Student Profile
+
+name: 
+sessions: 0
+last_lesson: 0
+notes: 
+
+# Kaya fills this in during the first session and updates it each time.
+# This file is what makes Kaya remember who she is talking to.
+# The student can read and edit this file too — that is part of learning how the system works.
+""",
+    )
+
+
+def generate_project_contents(
+    repo_root: Path,
+    kit_root: Path,
+    manifest: dict[str, object],
+    output_dir: Path,
+    project_name: str,
+    generated_at: str,
+) -> None:
     output_dir.mkdir(parents=True, exist_ok=False)
     ensure_git_repo(output_dir)
 
@@ -120,7 +369,7 @@ Use cold start when `state/current-status.md` is missing, or when it still refle
 
 Cold-start markers include:
 
-- `## Stage` is `Freshly generated project`
+- `## Stage` is `Freshly generated project with coaching layer`
 - `## Known Gaps` still says `State files are still in template form`
 
 1. Read `project.kit.json`.
@@ -144,31 +393,15 @@ Use ongoing-session mode when the project already has real project state and the
 
 - Treat `core/` and `kit/` as read-only reference layers by default.
 - Treat `specs/`, `state/`, and `tools/` as the live working system.
-- Use `make verify` before handing runtime changes to a human.
+- Before asking the student for environment help, run `make doctor` or `python3 scripts/project_tasks.py doctor` and attempt automatic repair first.
+- If `make` is unavailable, use `python3 scripts/project_tasks.py <command>` or `python scripts/project_tasks.py <command>`.
+- Project tasks use a local `.home/` automatically so Godot does not depend on global machine paths.
+- Use `make verify` or `python3 scripts/project_tasks.py verify` before handing runtime changes to a human.
 """,
     )
 
-    write_text(
-        output_dir / "README.md",
-        f"""# {project_name}
-
-Kit: `{manifest["kit_name"]}`
-
-{manifest["description"]}
-
-Engine: Godot {manifest["engine"]["version"]}
-
-## Commands
-
-- `make play`
-- `make test`
-- `make smoke`
-- `make verify`
-- `make editor`
-
-Start new sessions by reading `AGENT.md`.
-""",
-    )
+    write_generated_project_readme(output_dir, manifest, project_name)
+    write_generated_project_learning_layer(repo_root, output_dir, manifest)
 
     write_text(
         output_dir / ".gitignore",
@@ -184,6 +417,7 @@ Thumbs.db
 *.tmp
 *.temp
 *.log
+.home/
 """,
     )
 
@@ -192,46 +426,42 @@ Thumbs.db
         """PATH := /opt/homebrew/bin:/usr/local/bin:$(PATH)
 export PATH
 
-GODOT_BIN ?= $(shell command -v godot 2>/dev/null)
-ifeq ($(GODOT_BIN),)
-GODOT_BIN := /Applications/Godot.app/Contents/MacOS/Godot
+PYTHON_BIN ?= $(shell command -v python3 2>/dev/null)
+ifeq ($(PYTHON_BIN),)
+PYTHON_BIN := $(shell command -v python 2>/dev/null)
 endif
-PROJECT_ROOT := $(CURDIR)
 
-.PHONY: smoke test ci-verify verify play editor setup-hooks
+.PHONY: doctor smoke test ci-verify verify play editor setup-hooks
+
+doctor:
+\t@$(PYTHON_BIN) scripts/project_tasks.py doctor
 
 smoke:
-\t@$(GODOT_BIN) --headless --path "$(PROJECT_ROOT)" --editor --quit-after 1
+\t@$(PYTHON_BIN) scripts/project_tasks.py smoke
 
 test:
-\t@$(GODOT_BIN) --headless --path "$(PROJECT_ROOT)" --import --quit
-\t@$(GODOT_BIN) --headless -d -s --path "$(PROJECT_ROOT)" addons/gut/gut_cmdln.gd -gconfig=res://.gutconfig.json -gexit
+\t@$(PYTHON_BIN) scripts/project_tasks.py test
 
-ci-verify: test smoke
-\t@echo "[ci] Checking for FIXME markers..."
-\t@if grep -R "FIXME" . \\
-\t\t--include="*.gd" \\
-\t\t--exclude-dir=".git" \\
-\t\t--exclude-dir="node_modules"; then \\
-\t\techo "[ci] ❌ FIXME found in gameplay files"; \\
-\t\texit 1; \\
-\tfi
-\t@echo "[ci] ✅ Full verification passed."
+ci-verify:
+\t@$(PYTHON_BIN) scripts/project_tasks.py ci-verify
 
-verify: test smoke
-\t@echo "Verification passed."
+verify:
+\t@$(PYTHON_BIN) scripts/project_tasks.py verify
 
-play: verify
-\t@$(GODOT_BIN) --path "$(PROJECT_ROOT)"
+play:
+\t@$(PYTHON_BIN) scripts/project_tasks.py play
 
 editor:
-\t@$(GODOT_BIN) --editor --path "$(PROJECT_ROOT)"
+\t@$(PYTHON_BIN) scripts/project_tasks.py editor
 
 setup-hooks:
-\t@chmod +x scripts/hooks/pre-commit.sh
-\t@mkdir -p .git/hooks
-\t@ln -sf ../../scripts/hooks/pre-commit.sh .git/hooks/pre-commit
-\t@echo "✅ Pre-commit hook installed"
+\t@$(PYTHON_BIN) scripts/project_tasks.py setup-hooks
+
+tts:
+\t@$(PYTHON_BIN) scripts/project_tasks.py tts "$(TTS_TEXT)" --voice "$(VOICE)"
+
+tts-test:
+\t@$(PYTHON_BIN) scripts/project_tasks.py tts-test --voice "$(VOICE)"
 """,
     )
 
@@ -294,8 +524,14 @@ setup-hooks:
     copy_tree(template_root / "scripts" / "progression", output_dir / "scripts" / "progression")
     copy_tree(template_root / "assets" / "audio" / "sfx", output_dir / "assets" / "audio" / "sfx")
     copy_tree(template_root / "assets" / "collectibles" / "coins", output_dir / "assets" / "collectibles" / "coins")
-    copy_tree(template_root / "assets" / "environment" / "free_platformer_na" / "background", output_dir / "assets" / "environment" / "free_platformer_na" / "background")
-    copy_tree(template_root / "assets" / "environment" / "free_platformer_na" / "generated", output_dir / "assets" / "environment" / "free_platformer_na" / "generated")
+    copy_tree(
+        template_root / "assets" / "environment" / "free_platformer_na" / "background",
+        output_dir / "assets" / "environment" / "free_platformer_na" / "background",
+    )
+    copy_tree(
+        template_root / "assets" / "environment" / "free_platformer_na" / "generated",
+        output_dir / "assets" / "environment" / "free_platformer_na" / "generated",
+    )
     copy_tree(template_root / "assets" / "generated", output_dir / "assets" / "generated")
     copy_tree(template_root / "Player", output_dir / "assets" / "characters" / "player")
 
@@ -331,20 +567,21 @@ setup-hooks:
 
 ## Stage
 
-Freshly generated project
+Freshly generated project with coaching layer
 
 ## Summary
 
 - Project generated from the `{manifest["kit_id"]}` kit
 - Core and kit reference layers copied in
 - Starter game files scaffolded from the kit templates
+- Student-facing learning layer seeded under `learning/`
 - Live working system ready in `state/`, `specs/`, and `tools/`
 
 ## Last Known Working Direction
 
-- Begin cold-start initialization
-- Confirm the starter project runs with `make play`
-- Continue work from the seeded feature specs
+- Student-facing sessions start from `README.md`
+- Dev threads start from `AGENT.md`
+- Begin cold-start initialization and first-session onboarding
 
 ## Known Gaps
 
@@ -357,9 +594,9 @@ Freshly generated project
 
 ## Resume Here
 
-1. Read `AGENT.md`
-2. Confirm cold-start initialization
-3. Update this file with real project state
+1. Student-facing sessions begin from `README.md`
+2. Dev threads begin from `AGENT.md`
+3. Replace this template state with real project progress
 """,
     )
 
@@ -370,16 +607,17 @@ Freshly generated project
 ## Done
 
 - Project scaffolded from selected kit
+- Student-facing learning layer seeded into the generated project
 
 ## In Progress
 
-- Cold-start project initialization
+- First student onboarding in this generated project
 
 ## Next
 
-- Confirm the starter project runs
+- Run the game through Lesson 1
 - Review seeded specs
-- Begin the first feature task
+- Begin the first feature task when the student is ready
 
 ## Blocked
 
@@ -396,6 +634,8 @@ Freshly generated project
 - Generated project scaffolded from platform kit
 - Core and kit reference layers copied in
 - Starter game files, tests, docs, and verification files created
+- Student-facing learning layer created under `learning/`
+- Generated project startup now begins from `README.md` for Thread 1 and `AGENT.md` for the Dev thread
 
 ## Handoff Note
 
@@ -409,7 +649,7 @@ This project has not yet gone through a real development session.
 
 ## Required Gate Before Human Handoff
 
-- Run `make verify` before asking a human to play or inspect the game
+- Run `make verify` or `python3 scripts/project_tasks.py verify` before asking a human to play or inspect the game
 - Treat runtime-affecting changes as gate-worthy, including gameplay code, scene edits, config changes, and debug instrumentation
 - If verification fails, fix it before handoff
 - If verification is blocked, say so clearly and do not hand off the build as runnable
@@ -482,12 +722,21 @@ Add tools here when the project evaluates them so future sessions do not repeat 
 
 Use these commands during development:
 
+- `make doctor` — environment preflight and automatic repair where possible
 - `make smoke` — headless startup check
 - `make test` — automated test suite
 - `make ci-verify` — CI-facing verification including FIXME enforcement
 - `make verify` — required gate before handoff
 - `make play` — run the game
 - `make editor` — open the project in Godot
+
+If `make` is unavailable, use `python3 scripts/project_tasks.py <command>` instead.
+
+The project task runner automatically:
+
+- repairs `git safe.directory` when the environment reports dubious ownership
+- uses a local `.home/` so Godot can write inside the project
+- provides the same commands without depending on `make`
 
 ## Manual Checks
 
@@ -498,8 +747,25 @@ Use these commands during development:
     )
 
     copy_file(repo_root / "scripts" / "hooks" / "pre-commit.sh", output_dir / "scripts" / "hooks" / "pre-commit.sh")
-    copy_file(repo_root / "scripts" / "ci" / "verify.sh", output_dir / "scripts" / "ci" / "verify.sh")
+    copy_file(repo_root / "scripts" / "kaya_tts.sh", output_dir / "scripts" / "kaya_tts.sh")
+    copy_file(repo_root / "templates" / "generated-project" / "project_tasks.py", output_dir / "scripts" / "project_tasks.py")
+    write_text(
+        output_dir / "scripts" / "ci" / "verify.sh",
+        """#!/usr/bin/env bash
+set -e
+
+if command -v python3 >/dev/null 2>&1; then
+  PYTHON_BIN=python3
+else
+  PYTHON_BIN=python
+fi
+
+"$PYTHON_BIN" scripts/project_tasks.py ci-verify
+""",
+    )
     (output_dir / "scripts" / "hooks" / "pre-commit.sh").chmod(0o755)
+    (output_dir / "scripts" / "kaya_tts.sh").chmod(0o755)
+    (output_dir / "scripts" / "project_tasks.py").chmod(0o755)
     (output_dir / "scripts" / "ci" / "verify.sh").chmod(0o755)
 
     write_text(
@@ -537,7 +803,67 @@ jobs:
     add_gitkeeps(output_dir / "scenes")
     add_gitkeeps(output_dir / "scripts")
 
-    print(f"Generated project at {output_dir}")
+
+def generate_into_output_root(
+    repo_root: Path,
+    kit_root: Path,
+    manifest: dict[str, object],
+    output_root: Path,
+    project_name: str,
+    generated_at: str,
+) -> None:
+    temp_source = output_root / TEMP_SOURCE_DIRNAME
+    temp_generated = output_root / TEMP_GENERATED_DIRNAME
+
+    cleanup_temp_roots(output_root)
+    copy_repo_snapshot(repo_root, temp_source, exclude_top_level=top_level_output_name(repo_root, output_root))
+    generate_project_contents(temp_source, temp_source / "kits" / str(manifest["kit_id"]), manifest, temp_generated, project_name, generated_at)
+    clear_directory(output_root, keep_names={TEMP_SOURCE_DIRNAME, TEMP_GENERATED_DIRNAME})
+    move_directory_contents(temp_generated, output_root)
+    cleanup_temp_roots(output_root)
+
+
+def prepare_output_root(output_root: Path, repo_root: Path, *, in_place_root: bool) -> None:
+    if output_root.exists():
+        if not output_root.is_dir():
+            raise SystemExit(f"Output path is not a directory: {output_root}")
+        if any(output_root.iterdir()):
+            if not in_place_root:
+                raise SystemExit(
+                    "Output directory already exists and is not empty. "
+                    "Use --in-place-root only when transforming an existing platform root in place."
+                )
+            if output_root != repo_root:
+                raise SystemExit(
+                    "--in-place-root is only supported when --output points at the current platform source root."
+                )
+        return
+
+    output_root.mkdir(parents=True, exist_ok=False)
+
+
+def main() -> None:
+    args = parse_args()
+    repo_root = Path(__file__).resolve().parent.parent
+    kit_root = repo_root / "kits" / args.kit
+    if not kit_root.exists():
+        raise SystemExit(f"Kit not found: {args.kit}")
+
+    manifest = json.loads((kit_root / "kit.manifest.json").read_text(encoding="utf-8"))
+    output_root = Path(args.output).resolve()
+    project_name = args.name or f"{manifest['kit_name']} Starter"
+    generated_at = datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+
+    prepare_output_root(output_root, repo_root, in_place_root=args.in_place_root)
+
+    try:
+        generate_into_output_root(repo_root, kit_root, manifest, output_root, project_name, generated_at)
+    except (Exception, SystemExit):
+        cleanup_temp_roots(output_root)
+        clear_directory(output_root)
+        raise
+
+    print(f"Generated project at {output_root}")
 
 
 if __name__ == "__main__":

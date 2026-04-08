@@ -11,6 +11,7 @@ signal collected(value: int)
 var base_position := Vector2.ZERO
 var time_offset := 0.0
 var is_collected := false
+var pickup_enabled := true
 
 func _ready() -> void:
 	add_to_group("coins")
@@ -38,6 +39,7 @@ func collect() -> void:
 	collected.emit(value)
 
 func reset_coin() -> void:
+	pickup_enabled = true
 	set_collected_state(false)
 
 
@@ -46,10 +48,20 @@ func set_collected_state(collected_state: bool) -> void:
 	visible = not collected_state
 	rotation = 0.0
 	position = base_position
-	monitoring = not collected_state
-	monitorable = not collected_state
-	collision_shape.disabled = collected_state
+	_sync_pickup_state()
+
+
+func set_pickup_enabled(enabled: bool) -> void:
+	pickup_enabled = enabled
+	_sync_pickup_state()
+
+
+func _sync_pickup_state() -> void:
+	var can_pick_up := pickup_enabled and not is_collected
+	monitoring = can_pick_up
+	monitorable = can_pick_up
+	collision_shape.disabled = not can_pick_up
 
 func _on_body_entered(body: Node) -> void:
-	if body is CharacterBody2D:
+	if body is CharacterBody2D and pickup_enabled:
 		collect()

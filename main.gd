@@ -109,8 +109,10 @@ func _restart_game() -> void:
 	_start_game()
 
 func _reset_player() -> void:
+	_set_coin_pickups_enabled(false)
 	player.global_position = _find_safe_respawn_position(respawn_position)
 	player.velocity = Vector2.ZERO
+	call_deferred("_restore_coin_pickups_after_respawn")
 
 	var anim := player.get_node_or_null("AnimatedSprite2D") as AnimatedSprite2D
 	if anim != null:
@@ -185,6 +187,15 @@ func _connect_checkpoints() -> void:
 func _reset_coins() -> void:
 	for coin in get_tree().get_nodes_in_group("coins"):
 		coin.reset_coin()
+
+
+func _set_coin_pickups_enabled(enabled: bool) -> void:
+	for coin in get_tree().get_nodes_in_group("coins"):
+		coin.set_pickup_enabled(enabled)
+
+
+func _restore_coin_pickups_after_respawn() -> void:
+	_set_coin_pickups_enabled(true)
 
 func _on_coin_collected(value: int) -> void:
 	score += value

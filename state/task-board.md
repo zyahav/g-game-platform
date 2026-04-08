@@ -60,15 +60,54 @@
   - generated CI workflow wired to `make ci-verify`
   - verified hook rejection on staged `FIXME`
   - verified CI failure on intentional gameplay `FIXME`
+- Add generated-project environment self-healing:
+  - `scripts/project_tasks.py` task runner
+  - `make doctor`
+  - local `.home/` Godot path
+  - generated docs that prefer automatic repair before asking the student for help
+  - generated `Makefile` and CI path routed through the task runner
+- Freeze the architecture for the startup and learning-layer rollout:
+  - `README.md` Thread 1 bootstrap
+  - `learning/coach.md` loader
+  - `docs/ARCHITECTURE.md`
+  - `docs/DECISION-STARTUP-AND-LEARNING-LAYER.md`
+  - `docs/PILOT_CHECKLIST.md`
+- Add `docs/IMPLEMENTATION-PLAN-GENERATOR.md`
+- Refactor `scripts/generate_project.py` to:
+  - stage the platform source into `._platform_source/`
+  - generate into `._generated/`
+  - promote wholesale into the final root
+  - delete temp scaffolding on success
+  - delete temp scaffolding and leave the root empty on failure
+- Add generated-project coaching outputs:
+  - generated-project `README.md` for Thread 1 → `learning/coach.md`
+  - generated `learning/` layer
+  - generated-project `learning/coach.md`
+  - generated-project `learning/kaya/Onboarding.md`
+  - generated `state/student.md`
+- Verify locally:
+  - fresh generation path
+  - in-place root transformation path
+  - failure cleanup path
+- Document the TTS integration findings and lock tonight's safe mode:
+  - direct KAYA TTS works
+  - repo `make tts` flow works
+  - Codex notify hook is not suitable for full automatic reply speech
+  - tonight's choice is manual short Kaya TTS plus cleaned event-only notify speech
 
 ## In Progress
 
-- Hold at Gate E for PM approval and end-to-end sign-off
+- Ship the first production snapshot:
+  - commit the startup/coaching/TTS rollout
+  - push to GitHub
+  - hand the repo to the student
 
 ## Next
 
-- Decide whether to keep `scripts/ci/verify.sh` as a legacy helper or replace it with a documented pointer to `make ci-verify`
-- If Gate E is approved, plan the first post-platform feature batch on top of the generated-project contract
+- During the student session, use manual short Kaya TTS for important moments only
+- Capture only concrete failures or confusion points
+- Refine at most three things from the first live session
+- Re-run verification after any follow-up fix
 
 ## Blocked
 

@@ -2,107 +2,77 @@
 
 ## Stage
 
-Platform build, Batch 5 complete
+Architecture frozen. Generator/startup rollout implemented and verified locally. Ready to push the first production snapshot.
 
 ## Implementation Tracker
 
-- Current batch: Batch 5
-- Current step: 49
-- Last completed step: 49
-- Gate status: Gate E ready for review
+- Current phase: Post-decision generator rollout
+- Current focus: production push readiness
+- Last completed milestone: stable generated-project rollout plus live student-flow rehearsal
+- Ready for: commit + push + student use
 
 ## Summary
 
 The repo currently has:
 
-- A playable staircase platformer level
-- Layered environment art using the `FreePlatformerNA` pack
-- Player movement and jumping
-- Start, win, and lose states
-- HUD with score and coin count
-- Reusable coin scene and coin collection
-- Reusable spike hazard scene and hazard-triggered lose flow
-- Reusable checkpoint scene with saved progress and validated safe respawn on restart after game over
-- Basic audio feedback
-- Integrated reusable framework package under `packages/game-agent/`
-- A repo-native tooling registry under `tools/`
-- A `Makefile` command surface for repeatable Godot and tooling commands
-- A private GitHub repo connected at `origin`
-- A `make verify` preflight gate before human playback
-- A working `GUT` test setup wired into `make verify`
-- Documented gameplay invariants for safe respawn behavior
-- A discussion-first protocol for changing repo rules, skills, and workflow
-- A hard handoff gate that requires green verification before user execution
-- A root platform `AGENT.md` for setup/install mode
-- A reduced platform `core/` contract with agent rules, workflow, verification, and protocols
-- Platform skeleton folders for `kits/`, `templates/`, `docs/`, and `.github/workflows/`
-- Platform hook and CI scripts under `scripts/hooks/` and `scripts/ci/`
-- Platform-standard `Makefile` aliases: `make test`, `make smoke`, `make editor`, and `make setup-hooks`
-- A first extracted `platformer` kit under `kits/platformer/`
-- Distilled platformer kit specs, skills, acceptance docs, templates, and reference notes based on the working game
-- A runnable kit template snapshot that smoke-tests successfully in isolation
-- A project generator at `scripts/generate_project.py`
-- A generated student project sample at `apps/platformer-generated` for local verification only
-- Generated projects now receive copied `core/`, copied distilled `kit/`, seeded docs/state/specs/tests, and a separate Git repo
-- A generator fix that strips stale source-resource UIDs from generated scenes so Godot loads the generated project cleanly by text paths without UID warnings
-- A second clean runtime verification sample at `apps/platformer-generated-clean`
-- A CI-facing `make ci-verify` target for both the platform and generated projects
-- Generated project CI now runs `make ci-verify` directly instead of shell-wrapping verification
-- Generated project cold-start guidance now names the exact template markers that distinguish cold-start from ongoing sessions
-- A fresh Gate E verification sample at `apps/platformer-generated-gatee3`
-- A verified Codex CLI end-to-end install flow from `/Users/zyahav/Documents/dev/codex-e2e-test`
+- A proven `platformer` kit extracted from the working game
+- Generated-project environment self-healing through `scripts/project_tasks.py`
+- Approved architecture and decision records for startup flow and generated-project learning behavior
+- A platform entry `README.md` that boots Thread 1 into `learning/coach.md`
+- A platform `learning/` layer with Kaya identity, onboarding, lessons, and the platformer lesson spec
+- A new execution-facing implementation plan in `docs/IMPLEMENTATION-PLAN-GENERATOR.md`
+- A refactored `scripts/generate_project.py` that now:
+  - supports stage → promote → cleanup generation
+  - supports destructive in-place transformation with `--in-place-root`
+  - writes generated-project `README.md` for Thread 1 → `learning/coach.md`
+  - seeds a generated-project coaching layer under `learning/`
+  - seeds `state/student.md`
+  - keeps generated-project `AGENT.md` as the Dev-only contract
 
 ## Last Known Working Direction
 
-- Hold at Gate E for PM approval and end-to-end sign-off
-- Use `apps/platformer-generated-gatee3` as the current generated-project startup-flow sample
-- Keep generated projects separate from the platform repo, with `core/` and `kit/` copied in as read-only reference layers
-- Preserve the current game as the proven source behind future kit changes
+- Treat `docs/ARCHITECTURE.md` and `docs/DECISION-STARTUP-AND-LEARNING-LAYER.md` as frozen source-of-truth docs unless implementation or pilot exposes a contradiction
+- Use `docs/IMPLEMENTATION-PLAN-GENERATOR.md` as the execution plan for this rollout
+- Use the new generated-project `README.md` + `learning/coach.md` contract for Thread 1 in generated projects
+- Keep `core/` and `kit/` copied into generated projects as read-only reference layers
 
 ## Known Gaps
 
-- The generated project samples under `apps/` are local verification outputs and are intentionally not committed
-- Direct local invocation of `scripts/ci/verify.sh` currently crashes inside Godot's headless logging path in this Codex sandbox even though `make test` and `make smoke` both pass on their own
+- Full automatic conversational TTS is still not solved; tonight's safe choice is manual short Kaya TTS plus the cleaned event-only notify hook
 - Web export templates are still not fully installed
-- Automated coverage is still small even though `GUT` is installed and running
- 
+- The repo still needs its first production commit/push from this machine
+
 ## Verified Automation
 
-- `make test` passes through the new platform-standard alias
-- `make smoke` passes through the new platform-standard alias
-- `make setup-hooks` installs the new `scripts/hooks/pre-commit.sh` symlink successfully
-- `kits/platformer/kit.manifest.json` validates as JSON
-- `kits/platformer/templates/` smoke-tests successfully with Godot headless startup
-- `apps/platformer-generated/project.kit.json` validates as JSON
-- `apps/platformer-generated/.github/workflows/verify.yml` parses as valid YAML
-- `apps/platformer-generated/Makefile` contains all six required targets
-- `apps/platformer-generated/kit/` excludes `templates/` and `reference/`
-- `apps/platformer-generated/make setup-hooks` succeeds inside the generated project's own Git repo
-- `apps/platformer-generated-clean` passes:
-  - `make setup-hooks`
-  - `make smoke`
-  - `make test`
-  - `make verify`
-  - `make play`
-  - `make editor`
-- `apps/platformer-generated-gatee2` passes:
-  - `make setup-hooks`
+- `python3 -m py_compile scripts/generate_project.py templates/generated-project/project_tasks.py` passes
+- Fresh generated sample at `/tmp/ggen-fresh.u0DRg1/project` passed:
+  - `make doctor`
   - `make verify`
   - `make ci-verify`
-- `apps/platformer-generated-gatee2` fails `make ci-verify` as expected when `scripts/player.gd` contains `FIXME`
-- Generated `AGENT.md` now explicitly distinguishes cold-start from ongoing sessions using named template markers
-- `codex exec --skip-git-repo-check --full-auto` successfully generated `/Users/zyahav/Documents/dev/codex-e2e-test/student-project` from the platform repo and verified it
-- Inside the Codex CLI sandbox, Godot verification needed a workspace-local `HOME`, `XDG_DATA_HOME`, and `XDG_CONFIG_HOME` to avoid macOS user-data path crashes
-- The cleaned generator no longer emits stale source-resource UID warnings during generated-project startup
-- The current `GUT` suite still passes with:
+- Fresh generated sample now contains:
+  - generated-project `README.md` with Thread 1 → `learning/coach.md`
+  - generated-project `learning/` layer
+  - generated `state/student.md`
+- In-place bootstrap transformation at `/tmp/ggen-inplace.ZeM0zV/root` passed:
+  - `python3 scripts/generate_project.py --kit platformer --output ... --in-place-root`
+  - temp folders removed after promotion
+  - root now boots Kaya from generated-project `README.md`
+  - `make doctor` passes
+- Forced failure path at `/tmp/ggen-failsrc.qvFtXz/root` left the root empty after cleanup, confirming clean-retry behavior
+- The current repo `GUT` suite passes with:
   - 2 test scripts
   - 16 tests
   - 72 assertions
+- A fresh generated project also now passes with:
+  - `python3 scripts/project_tasks.py doctor`
+  - `python3 scripts/project_tasks.py verify`
+- The generated-project task runner is now Python 3.9-compatible
+- The checkpoint respawn / nearby-coin flake has been fixed in both the live repo and the platform kit templates
 
 ## Resume Here
 
-1. Review Gate E and approve or reject Batch 5
-2. If approved, treat the platform repo skeleton plus extracted first kit as end-to-end verified
-3. Use `apps/platformer-generated-gatee3` for any follow-up startup-flow demos
-4. Decide whether to keep `scripts/ci/verify.sh` as a legacy helper or replace it later with documentation that points CI users to `make ci-verify`
-5. Decide whether the generated-project `Makefile` should gain a student-facing Godot local-`HOME` helper for sandboxed Codex CLI runs
+1. Use `docs/TTS-INTEGRATION-NOTES.md` as the TTS source of truth for tonight
+2. Commit and push this production snapshot
+3. Have the student start from the generated-project bootstrap flow
+4. Capture only concrete failures or confusion points from live use
+5. Make a small follow-up refinement pass if needed

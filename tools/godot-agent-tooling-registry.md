@@ -52,7 +52,7 @@ Reason: useful later if we start juggling multiple Godot versions.
 
 | Tool | Category | Best For | Current Status | Fit For This Repo | Next Step |
 | --- | --- | --- | --- | --- | --- |
-| `Codex CLI` | Agent CLI / project setup | Student install flow, generated-project bootstrap, verification from a fresh directory | `Verified` | Strong fit as the student-facing entrypoint for this platform | Document the verified install command and local `HOME` workaround for Godot verification |
+| `Codex CLI` | Agent CLI / project setup | Student install flow, generated-project bootstrap, verification from a fresh directory | `Verified` | Strong fit as the student-facing entrypoint for this platform | Keep the generated-project task runner aligned with the verified CLI flow |
 | `GodotIQ` | MCP / runtime intelligence | Deep scene understanding, spatial context, code analysis | `Captured` | Promising, especially if we want richer editor/runtime visibility | Validate install path and compatibility with Codex workflow |
 | `Godot MCP (Coding-Solo)` | MCP / runtime control | Launching editor, running project, debug output, scene operations | `Captured` | Strong candidate for a first general MCP server | Evaluate against GodotIQ as the first MCP trial |
 | `GDAI MCP` | MCP / paid runtime control | Screenshots, input simulation, run-fix-verify loops | `Captured` | Interesting, but likely overkill before free options are tested | Leave for later unless free tools fall short |
@@ -97,7 +97,7 @@ XDG_CONFIG_HOME="$PWD/.home/.config" \
 make verify
 ```
 
-**Next evaluation step:** decide whether the generated-project `Makefile` should officially expose a student-friendly helper for the local-`HOME` Godot path, or whether this remains a CLI-environment note only.
+**Next evaluation step:** keep the generated-project task runner aligned with the CLI flow and re-run end-to-end checks after meaningful onboarding changes.
 
 ### GodotIQ
 

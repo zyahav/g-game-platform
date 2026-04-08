@@ -42,6 +42,7 @@ size = Vector2(140, 18)
 size = Vector2(80, 96)
 
 [node name="Main" type="Node2D" unique_id=2057027621]
+position = Vector2(0, 0)
 script = ExtResource("1_main")
 
 [node name="Background" type="Node2D" parent="." unique_id=358255448]
@@ -130,7 +131,7 @@ texture = ExtResource("6_pillar")
 
 [node name="TreeStart" type="Sprite2D" parent="." unique_id=303008389]
 z_index = 2
-position = Vector2(-645, 18)
+position = Vector2(-712, -12)
 scale = Vector2(2, 2)
 texture = ExtResource("17_tree_large")
 
@@ -175,7 +176,8 @@ position = Vector2(-350, 70)
 shape = SubResource("2")
 
 [node name="Sprite2D" type="Sprite2D" parent="Step1" unique_id=715351322]
-scale = Vector2(2.4, 1.5)
+position = Vector2(0.99999964, -17.000004)
+scale = Vector2(2.4, 1.8600049)
 texture = ExtResource("3_grass")
 
 [node name="Coin1" parent="." unique_id=863041907 instance=ExtResource("10_coin_scene")]

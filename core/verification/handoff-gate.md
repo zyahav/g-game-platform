@@ -4,6 +4,7 @@ Generated projects must use a hard verification gate before human playback or ha
 
 ## Required Commands
 
+- `make doctor` or `python3 scripts/project_tasks.py doctor` checks environment readiness and attempts automatic repair.
 - `make smoke` checks that the project starts cleanly in headless mode.
 - `make test` runs the automated test suite.
 - `make verify` is the required handoff gate and must run both smoke and tests together.

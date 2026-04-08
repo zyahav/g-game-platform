@@ -12,7 +12,8 @@ When a student points an agent at this repository and says `install`, the agent 
 4. Copy only the reduced project-facing `core/` content and the selected kit's generated-project reference content.
 5. Consume the kit templates into real project files.
 6. Create the generated project's own `AGENT.md`, `project.kit.json`, and working-system folders.
-7. Stop working inside this platform clone once generation is complete and continue in the generated project directory.
+7. Run the generated project's environment preflight and automatic repair path before asking the student for setup help.
+8. Stop working inside this platform clone once generation is complete and continue in the generated project directory.
 
 The platform repository is the source. The generated project is the product.
 

@@ -11,8 +11,10 @@ PROJECT_NAME ?= $(notdir $(PROJECT_ROOT))
 NPX ?= npx
 KIT ?= platformer
 OUTPUT_DIR ?= apps/$(KIT)-generated
+VOICE ?= af_bella
+TTS_TEXT ?= Hello, this is a live TTS test from Kaya.
 
-.PHONY: help check-env git-status gh-version gh-auth gh-create-private gh-push-main godot-version godot-import godot-smoke gut-test godot-editor editor smoke test ci-verify setup-hooks verify play forge-help generate-project
+.PHONY: help check-env git-status gh-version gh-auth gh-create-private gh-push-main godot-version godot-import godot-smoke gut-test godot-editor editor smoke test ci-verify setup-hooks verify play forge-help generate-project tts tts-test
 
 help:
 	@echo "Available targets:"
@@ -36,6 +38,8 @@ help:
 	@echo "  make play          - run preflight, then launch the game directly"
 	@echo "  make forge-help    - smoke-test Godot Forge availability via npx"
 	@echo "  make generate-project KIT=name OUTPUT_DIR=path - generate a student project from a kit"
+	@echo "  make tts TTS_TEXT='hello' VOICE=af_bella - speak text through Kaya TTS"
+	@echo "  make tts-test      - run a short Kaya TTS sanity check"
 
 check-env:
 	@echo "git: $$(git --version)"
@@ -112,3 +116,10 @@ generate-project:
 
 forge-help:
 	@$(NPX) -y godot-forge --help
+
+tts:
+	@chmod +x scripts/kaya_tts.sh
+	@VOICE="$(VOICE)" TTS_TEXT="$(TTS_TEXT)" ./scripts/kaya_tts.sh
+
+tts-test:
+	@$(MAKE) tts TTS_TEXT="Hello, this is a live TTS test from Kaya." VOICE="$(VOICE)"

@@ -20,6 +20,11 @@ These rules define how the agent must behave inside generated student projects.
 - No human handoff is allowed until the changed build is green again.
 - Runtime-affecting changes include gameplay code, scene edits, configuration changes, debug instrumentation, and temporary logging.
 - The user validates behavior, not build stability.
+- Resolve common environment blockers automatically before asking the student to fix them manually.
+- Run project doctor first when verification or editor launch fails for setup reasons.
+- Repair `git safe.directory` automatically when the environment reports dubious ownership.
+- Use the generated project's Python task runner when `make` is unavailable.
+- Use the generated project's local `.home/` so Godot can write inside the project workspace.
 
 ## System Change Discipline
 

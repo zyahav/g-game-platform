@@ -104,7 +104,102 @@
 - Verified the real Codex CLI student-install flow from `/Users/zyahav/Documents/dev/codex-e2e-test`
 - Confirmed `codex exec --skip-git-repo-check --full-auto` can read the platform `AGENT.md`, generate `student-project`, and switch into it without modifying the platform source repo
 - Confirmed generated-project verification passes from Codex CLI when Godot uses a workspace-local `HOME`, `XDG_DATA_HOME`, and `XDG_CONFIG_HOME`
+- Added a generated-project task runner template at `templates/generated-project/project_tasks.py`
+- Updated generated projects so `make doctor`, `make verify`, `make ci-verify`, `make play`, `make editor`, and `make setup-hooks` all route through the Python task runner
+- Updated generated docs and platform rules so the agent must attempt environment repair before asking the student for manual setup help
+- Added project-local `.home/` handling to generated-project Godot commands so writable engine state stays inside the project workspace
+- Added automatic `git safe.directory` repair to the generated-project doctor/task runner path
+- Replaced the generated-project CI shell script with a thin wrapper around `scripts/project_tasks.py ci-verify`
+- Verified on a fresh sample at `/tmp/platformer-envfix` that:
+  - `python3 scripts/project_tasks.py doctor` passes
+  - `python3 scripts/project_tasks.py setup-hooks` passes
+  - `python3 scripts/project_tasks.py verify` passes
+  - `make verify` passes
+  - `make ci-verify` passes
 
 ## Handoff Note
 
-Batch 5 is complete and waiting at Gate E. Do not start post-platform work until approval is given.
+The platform build is approved and the generated-project environment self-healing update is now the next checkpoint for commit.
+
+## 2026-04-07
+
+- Finalized the learning-layer architecture docs into a stable set:
+  - `README.md`
+  - `docs/ARCHITECTURE.md`
+  - `docs/DECISION-STARTUP-AND-LEARNING-LAYER.md`
+  - `docs/PILOT_CHECKLIST.md`
+  - `learning/coach.md`
+  - `learning/kaya/`
+  - `learning/lessons/platformer.md`
+- Added `docs/IMPLEMENTATION-PLAN-GENERATOR.md` as the execution-facing generator rollout plan
+- Refactored `scripts/generate_project.py` so the generator can:
+  - stage platform source into `._platform_source/`
+  - generate into `._generated/`
+  - promote generated output wholesale into the final root
+  - delete both temp folders on success
+  - delete temp folders and leave the root empty on failure
+- Added a safety guard to the generator:
+  - destructive transformation of an existing non-empty root now requires `--in-place-root`
+- Changed generated projects to boot Thread 1 from `README.md` into `learning/coach.md` instead of `AGENT.md`
+- Added generated-project learning layer output:
+  - shared Kaya files copied in
+  - generated-project `learning/coach.md`
+  - generated-project `learning/kaya/Onboarding.md`
+  - generated `state/student.md`
+  - chosen-kit lesson spec copied into `learning/lessons/` when present
+- Updated generated project state templates so they match the new startup contract
+- Verified locally:
+  - `python3 -m py_compile scripts/generate_project.py templates/generated-project/project_tasks.py`
+  - fresh generation path at `/tmp/ggen-fresh.u0DRg1/project`
+  - `make doctor` on the fresh sample
+  - `make verify` on the fresh sample
+  - `make ci-verify` on the fresh sample
+  - in-place root transformation at `/tmp/ggen-inplace.ZeM0zV/root`
+  - `make doctor` on the transformed root
+  - forced failure cleanup at `/tmp/ggen-failsrc.qvFtXz/root`, which left the root empty for clean retry
+- Added KAYA TTS repo support:
+  - `docs/KAYA_TTS_AGENT_GUIDE.md`
+  - `learning/kaya/TTS.md`
+  - `scripts/kaya_tts.sh`
+  - root `make tts` and `make tts-test`
+  - generated-project `tts` and `tts-test` support through `scripts/project_tasks.py`
+- Verified the direct and repo-level TTS path works for manual short speech
+- Tested the Codex global notify hook and confirmed:
+  - it can speak short event phrases
+  - it does not reliably contain the clean final assistant reply
+  - it is not suitable as the architecture for full automatic conversational TTS
+- Cleaned the global notify hook so it:
+  - speaks only short Kaya-style phrases for approval, error, and finished
+  - stays silent on noisy machine payloads
+- Recorded the TTS findings and future direction in `docs/TTS-INTEGRATION-NOTES.md`
+- Locked tonight's safe TTS mode:
+  - manual short Kaya TTS for important student-facing moments
+  - event-only notify speech
+  - no attempt to auto-read full replies through the current notify hook
+- Updated platform `learning/kaya/Onboarding.md` so the Phase 1 PM-to-Dev instruction matches the implemented two-phase flow:
+  - platform repo already present in the directory
+  - Dev reads `AGENT.md` and follows Setup Mode
+  - Dev generates the platformer so the current folder becomes the generated project root
+  - Dev runs environment repair before asking the student for technical setup help
+- Updated platform coaching copy to reduce first-session confusion:
+  - Phase 1 onboarding now keeps the student's name in memory and does not try to write `state/student.md` in the platform source repo before generation
+  - Lesson 1 now tells Kaya to mention the current project folder path explicitly and offer `make play` as the fastest first-run path
+- Removed the hardcoded KAYA TTS API key from the repo:
+  - `scripts/kaya_tts.sh` now requires `KAYA_TTS_API_KEY`
+  - docs/examples now use placeholders or env-var form
+- Backported the generated-project Python 3.9 compatibility fix into `templates/generated-project/project_tasks.py`
+- Backported the checkpoint respawn / nearby-coin flake fix into:
+  - `main.gd`
+  - `scripts/collectibles/coin.gd`
+  - `kits/platformer/templates/main.gd`
+  - `kits/platformer/templates/scripts/collectibles/coin.gd`
+- Re-verified the production snapshot with:
+  - `python3 -m py_compile templates/generated-project/project_tasks.py scripts/generate_project.py`
+  - `make verify`
+  - fresh generated-project `doctor`
+  - fresh generated-project `verify`
+
+## Handoff Note
+
+Architecture is frozen for this rollout unless live use exposes a contradiction.
+The repo is ready for its first production commit/push, with `docs/TTS-INTEGRATION-NOTES.md` as the TTS reference for tonight and `docs/PILOT_CHECKLIST.md` as the lightweight live-session observation sheet.
