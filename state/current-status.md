@@ -2,14 +2,14 @@
 
 ## Stage
 
-Architecture frozen. Generator/startup rollout and publish flow implemented. VM hosting prepared. Ready to push the first production snapshot.
+Architecture frozen. Generator/startup rollout and publish flow implemented. Production snapshot pushed. First live web deploy verified.
 
 ## Implementation Tracker
 
-- Current phase: Production snapshot preparation
-- Current focus: state sync, commit scope approval, and push readiness
-- Last completed milestone: generated-project publish flow implementation plus VM hosting baseline setup
-- Ready for: commit + push + student use
+- Current phase: Pilot readiness after first live deploy
+- Current focus: tighten generated export readiness and student meeting flow
+- Last completed milestone: first live website deploy for `pilot-test-1`
+- Ready for: student meeting + follow-up refinement
 
 ## Summary
 
@@ -42,6 +42,8 @@ The repo currently has:
   - `/srv/git` and `/var/www/projects` prepared
   - `allow-one-repo-push` helper installed on the VM
   - split hostname plan prepared for web vs Git/SSH hosting
+- The production snapshot is pushed to GitHub and the first live student site is now verified at:
+  - `https://games.zurot.org/zyahav/pilot-test-1/`
 
 ## Last Known Working Direction
 
@@ -55,9 +57,8 @@ The repo currently has:
 ## Known Gaps
 
 - Full automatic conversational TTS is still not solved; tonight's safe choice is manual short Kaya TTS plus the cleaned event-only notify hook
-- Web export templates are still not fully installed
 - Publish failure output still exposes fairly raw Git stderr and should be cleaned up in a later refinement pass
-- The repo still needs its production snapshot commit/push from this machine
+- Older generated projects created before the publish rollout may still be missing `export_presets.cfg`
 
 ## Verified Automation
 
@@ -100,11 +101,15 @@ The repo currently has:
   - `nginx` and `git` present
   - `/srv/git` and `/var/www/projects` created
   - `/usr/local/bin/allow-one-repo-push` installed and executable
+- Local machine web export templates are now verified installed for Godot 4.6.1
+- First live deployment is verified:
+  - `pilot-test-1` exported successfully after adding the Web preset file
+  - deploy repo updated on `git.games.zurot.org`
+  - public URL serves the real Godot export HTML
 
 ## Resume Here
 
 1. Use `docs/TTS-INTEGRATION-NOTES.md` as the TTS source of truth for tonight
-2. Approve the production commit scope including publish + VM docs/state sync
-3. Commit and push this production snapshot
-4. Have the student start from the generated-project bootstrap flow
-5. Capture only concrete failures or confusion points from live use
+2. Use the live `pilot-test-1` website for the student meeting if needed
+3. Regenerate older projects from the updated platform when you want the full native publish flow
+4. Capture only concrete failures or confusion points from live use

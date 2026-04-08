@@ -340,6 +340,7 @@ def generate_project_contents(
 
     copy_file(template_root / "project.godot", output_dir / "project.godot")
     copy_file(template_root / "icon.svg", output_dir / "icon.svg")
+    copy_file(repo_root / "export_presets.cfg", output_dir / "export_presets.cfg")
 
     write_text(
         output_dir / "project.kit.json",

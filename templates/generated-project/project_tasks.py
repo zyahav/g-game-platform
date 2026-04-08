@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import os
+import re
 import shlex
 import shutil
 import stat
@@ -186,6 +187,44 @@ def resolve_deploy_remote(config: dict[str, str]) -> str:
     )
 
 
+def detect_godot_version(godot_bin: str) -> str | None:
+    result = run([godot_bin, "--version"], capture=True)
+    version_text = "\n".join(filter(None, [result.stdout, result.stderr])).strip()
+    match = re.search(r"(\d+\.\d+(?:\.\d+)?\.[A-Za-z0-9]+)", version_text)
+    return match.group(1) if match else None
+
+
+def export_templates_root() -> Path:
+    if sys.platform == "darwin":
+        return Path.home() / "Library" / "Application Support" / "Godot" / "export_templates"
+    if os.name == "nt":
+        appdata = os.environ.get("APPDATA")
+        if appdata:
+            return Path(appdata) / "Godot" / "export_templates"
+        return Path.home() / "AppData" / "Roaming" / "Godot" / "export_templates"
+
+    xdg_data_home = os.environ.get("XDG_DATA_HOME")
+    if xdg_data_home:
+        return Path(xdg_data_home) / "godot" / "export_templates"
+    return Path.home() / ".local" / "share" / "godot" / "export_templates"
+
+
+def inspect_web_export_templates(godot_bin: str) -> tuple[bool, str]:
+    version = detect_godot_version(godot_bin)
+    if not version:
+        return False, "unknown (could not determine the Godot version for export template lookup)"
+
+    template_dir = export_templates_root() / version
+    required = ("web_release.zip", "web_nothreads_release.zip")
+    missing = [name for name in required if not (template_dir / name).exists()]
+    if missing:
+        return (
+            False,
+            f"missing in {template_dir} (required: {', '.join(missing)})",
+        )
+    return True, f"ready in {template_dir}"
+
+
 def print_doctor() -> None:
     ensure_safe_directory()
 
@@ -202,10 +241,19 @@ def print_doctor() -> None:
 
     print(f"godot: {godot}")
     print(f"local_home: {PROJECT_ROOT / '.home'}")
+    preset_path = PROJECT_ROOT / "export_presets.cfg"
+    print(f"web_export_preset: {'present' if preset_path.exists() else 'missing'}")
+    templates_ok, templates_status = inspect_web_export_templates(godot)
+    print(f"web_export_templates: {templates_status}")
     print("notes:")
     print("- use this script when make is unavailable")
     print("- git safe.directory is repaired automatically when possible")
     print("- Godot commands use a project-local writable home automatically")
+    if not preset_path.exists():
+        print("- export_presets.cfg is missing; copy the platform Web export preset into this project before using make export-web")
+    if not templates_ok:
+        print("- install the matching Godot export templates manually, then retry web export")
+        print("- manual install: download the matching export_templates .tpz, extract it, and copy templates/ into the folder shown above")
 
 
 def find_fixmes() -> list[tuple[Path, int, str]]:
