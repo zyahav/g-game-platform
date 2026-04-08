@@ -418,6 +418,32 @@ Thumbs.db
 *.temp
 *.log
 .home/
+
+# Web export and deploy working copy
+build/
+""",
+    )
+
+    write_text(
+        output_dir / "publish.toml",
+        """# Publish configuration for this project.
+# Fill in these values before running: make publish
+
+[publish]
+user_handle = ""
+project_name = ""
+vm_host = ""
+public_url = ""
+deploy_remote = ""
+ssh_key_path = ""
+
+# deploy_remote is optional.
+# If left empty, it is derived as:
+#   <user_handle>@<vm_host>:/srv/git/<user_handle>/<project_name>.git
+
+# ssh_key_path is the path to your SSH deploy key for this project.
+# Example: ~/.ssh/myproject_deploy_key
+# One key per project. The agent configures this during publish-init.
 """,
     )
 
@@ -431,7 +457,10 @@ ifeq ($(PYTHON_BIN),)
 PYTHON_BIN := $(shell command -v python 2>/dev/null)
 endif
 
-.PHONY: doctor smoke test ci-verify verify play editor setup-hooks
+VOICE ?= af_bella
+TTS_TEXT ?= Hello, this is a live TTS test from Kaya.
+
+.PHONY: doctor smoke test ci-verify verify play editor setup-hooks tts tts-test export-web publish-check publish-init publish publish-info publish-status
 
 doctor:
 \t@$(PYTHON_BIN) scripts/project_tasks.py doctor
@@ -462,6 +491,24 @@ tts:
 
 tts-test:
 \t@$(PYTHON_BIN) scripts/project_tasks.py tts-test --voice "$(VOICE)"
+
+export-web:
+\t@$(PYTHON_BIN) scripts/project_tasks.py export-web
+
+publish-check:
+\t@$(PYTHON_BIN) scripts/project_tasks.py publish-check
+
+publish-init:
+\t@$(PYTHON_BIN) scripts/project_tasks.py publish-init
+
+publish:
+\t@$(PYTHON_BIN) scripts/project_tasks.py publish
+
+publish-info:
+\t@$(PYTHON_BIN) scripts/project_tasks.py publish-info
+
+publish-status:
+\t@$(PYTHON_BIN) scripts/project_tasks.py publish-status
 """,
     )
 
@@ -622,6 +669,44 @@ Freshly generated project with coaching layer
 ## Blocked
 
 - None yet
+""",
+    )
+
+    write_text(
+        output_dir / "docs" / "PUBLISHING.md",
+        """# Publishing Your Game
+
+Say "publish my game" to Kaya. She will handle it.
+
+## What Happens
+
+1. Kaya asks the Dev to publish.
+2. The Dev exports the game for the web.
+3. The Dev pushes the export to your hosting server.
+4. You get a live URL.
+
+## Configuration
+
+Edit `publish.toml` with your project details.
+Required fields:
+- `user_handle` — your username on the server
+- `project_name` — your project name
+- `vm_host` — the server address
+- `public_url` — the public URL for your game
+
+## Source vs Deploy
+
+Your source code lives in this repo.
+Your live game comes from `build/web/`, which is a separate deploy working copy.
+Only exported web files are pushed live — not your source code.
+
+## Commands (if you need them directly)
+
+- `make export-web` — export the game for the web
+- `make publish-check` — verify the export is ready
+- `make publish` — export and publish in one step
+- `make publish-status` — check current publish readiness
+- `make publish-info` — show your public URL and deploy config
 """,
     )
 

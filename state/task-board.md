@@ -94,16 +94,36 @@
   - repo `make tts` flow works
   - Codex notify hook is not suitable for full automatic reply speech
   - tonight's choice is manual short Kaya TTS plus cleaned event-only notify speech
+- Complete publish design and implementation:
+  - `docs/IMPLEMENTATION-SPEC-PUBLISH.md`
+  - `docs/IMPLEMENTATION-SPEC-VM-HOSTING.md`
+  - generated `publish.toml`
+  - generated publish `Makefile` targets
+  - generated `docs/PUBLISHING.md`
+  - publish commands in `templates/generated-project/project_tasks.py`
+  - Coach → Dev publish handoff in `learning/kaya/Playbook.md`
+- Verify generated-project publish artifacts and readiness behavior:
+  - fresh generated project contains publish files and targets
+  - `make publish-check` fails clearly on empty config
+  - `make publish-status` reports readiness clearly
+- Prepare the Hetzner VM baseline for publish:
+  - verified `nginx` and `git`
+  - created `/srv/git`
+  - created `/var/www/projects`
+  - installed `allow-one-repo-push`
+  - prepared the split-hostname web/Git hosting model
 
 ## In Progress
 
 - Ship the first production snapshot:
-  - commit the startup/coaching/TTS rollout
+  - commit the startup/coaching/TTS/publish rollout
+  - include the approved publish specs and synced state docs
   - push to GitHub
   - hand the repo to the student
 
 ## Next
 
+- Complete the first real per-project VM setup using the approved hosting flow
 - During the student session, use manual short Kaya TTS for important moments only
 - Capture only concrete failures or confusion points
 - Refine at most three things from the first live session

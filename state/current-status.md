@@ -2,13 +2,13 @@
 
 ## Stage
 
-Architecture frozen. Generator/startup rollout implemented and verified locally. Ready to push the first production snapshot.
+Architecture frozen. Generator/startup rollout and publish flow implemented. VM hosting prepared. Ready to push the first production snapshot.
 
 ## Implementation Tracker
 
-- Current phase: Post-decision generator rollout
-- Current focus: production push readiness
-- Last completed milestone: stable generated-project rollout plus live student-flow rehearsal
+- Current phase: Production snapshot preparation
+- Current focus: state sync, commit scope approval, and push readiness
+- Last completed milestone: generated-project publish flow implementation plus VM hosting baseline setup
 - Ready for: commit + push + student use
 
 ## Summary
@@ -28,6 +28,20 @@ The repo currently has:
   - seeds a generated-project coaching layer under `learning/`
   - seeds `state/student.md`
   - keeps generated-project `AGENT.md` as the Dev-only contract
+- An implemented generated-project publish flow that now:
+  - adds generated `publish.toml`
+  - adds publish-aware generated `Makefile` targets
+  - adds generated `docs/PUBLISHING.md`
+  - adds publish commands to `templates/generated-project/project_tasks.py`
+  - keeps publish requests in the Coach → Dev handoff through `learning/kaya/Playbook.md`
+- Two approved publish specs:
+  - `docs/IMPLEMENTATION-SPEC-PUBLISH.md`
+  - `docs/IMPLEMENTATION-SPEC-VM-HOSTING.md`
+- External VM/operator preparation for first publish:
+  - Hetzner VM baseline verified
+  - `/srv/git` and `/var/www/projects` prepared
+  - `allow-one-repo-push` helper installed on the VM
+  - split hostname plan prepared for web vs Git/SSH hosting
 
 ## Last Known Working Direction
 
@@ -35,12 +49,15 @@ The repo currently has:
 - Use `docs/IMPLEMENTATION-PLAN-GENERATOR.md` as the execution plan for this rollout
 - Use the new generated-project `README.md` + `learning/coach.md` contract for Thread 1 in generated projects
 - Keep `core/` and `kit/` copied into generated projects as read-only reference layers
+- Treat `docs/IMPLEMENTATION-SPEC-PUBLISH.md` as the generated-project publish source of truth
+- Treat `docs/IMPLEMENTATION-SPEC-VM-HOSTING.md` as the operator/VM reference for live publish setup
 
 ## Known Gaps
 
 - Full automatic conversational TTS is still not solved; tonight's safe choice is manual short Kaya TTS plus the cleaned event-only notify hook
 - Web export templates are still not fully installed
-- The repo still needs its first production commit/push from this machine
+- Publish failure output still exposes fairly raw Git stderr and should be cleaned up in a later refinement pass
+- The repo still needs its production snapshot commit/push from this machine
 
 ## Verified Automation
 
@@ -68,11 +85,26 @@ The repo currently has:
   - `python3 scripts/project_tasks.py verify`
 - The generated-project task runner is now Python 3.9-compatible
 - The checkpoint respawn / nearby-coin flake has been fixed in both the live repo and the platform kit templates
+- The publish implementation now passes local verification:
+  - `python3 -m py_compile scripts/generate_project.py`
+  - `python3 -m py_compile templates/generated-project/project_tasks.py`
+  - `make verify`
+- A fresh generated publish sample now contains:
+  - `publish.toml`
+  - `docs/PUBLISHING.md`
+  - publish targets in generated `Makefile`
+- Fresh generated publish behavior is verified to:
+  - fail clearly on empty `publish.toml` required fields
+  - report publish readiness clearly with `make publish-status`
+- Hetzner VM baseline step is verified:
+  - `nginx` and `git` present
+  - `/srv/git` and `/var/www/projects` created
+  - `/usr/local/bin/allow-one-repo-push` installed and executable
 
 ## Resume Here
 
 1. Use `docs/TTS-INTEGRATION-NOTES.md` as the TTS source of truth for tonight
-2. Commit and push this production snapshot
-3. Have the student start from the generated-project bootstrap flow
-4. Capture only concrete failures or confusion points from live use
-5. Make a small follow-up refinement pass if needed
+2. Approve the production commit scope including publish + VM docs/state sync
+3. Commit and push this production snapshot
+4. Have the student start from the generated-project bootstrap flow
+5. Capture only concrete failures or confusion points from live use

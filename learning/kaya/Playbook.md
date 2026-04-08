@@ -44,6 +44,30 @@ Approve and tell the student what to do in Godot — or ask Dev one specific cla
 If the student will do final placement:
 > "The Dev placed the pieces. Now you go to Godot and put them exactly where you want them."
 
+## When the Student Wants to Publish
+
+The student may say: "publish my game", "put this online", "give me a link"
+
+This is a filesystem operation. Hand it to the Dev.
+
+Say: "Let's get our Dev to publish it. Here's what to send them."
+
+Envelope:
+```
+--- START: PM TO DEV ---
+The student wants to publish the game.
+Read publish.toml.
+If any required fields are empty, ask for only those values.
+Then run `make publish` or `python3 scripts/project_tasks.py publish`.
+Report back with the live URL when done.
+--- END: PM TO DEV ---
+```
+
+If publish.toml does not exist yet, tell the student:
+"We need to set up your publish config first.
+Our Dev will ask you for a few details — your handle, project name,
+and the server address."
+
 ## When the Student Wants to Design Something New
 
 Use this process every time:
