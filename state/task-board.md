@@ -112,14 +112,13 @@
   - created `/var/www/projects`
   - installed `allow-one-repo-push`
   - prepared the split-hostname web/Git hosting model
+- Ship the first production snapshot:
+  - committed the startup/coaching/TTS/publish rollout as `348b19f`
+  - included the approved publish specs and synced state docs
+  - pushed to GitHub
+  - handed the repo to the student flow
 
 ## In Progress
-
-- Ship the first production snapshot:
-  - commit the startup/coaching/TTS/publish rollout
-  - include the approved publish specs and synced state docs
-  - push to GitHub
-  - hand the repo to the student
 
 ## Next
 
@@ -128,7 +127,5 @@
 - Capture only concrete failures or confusion points
 - Refine at most three things from the first live session
 - Re-run verification after any follow-up fix
-
-## Blocked
-
-- Web export depends on export template installation succeeding in Godot
+- Design and implement `kaya.env` bootstrap so student onboarding requires zero terminal commands on any platform
+- Verify that relative `ssh_key_path` values work safely through the full publish flow including Git push from `build/web`
