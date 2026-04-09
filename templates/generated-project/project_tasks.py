@@ -194,9 +194,7 @@ def detect_godot_version(godot_bin: str) -> str | None:
     return match.group(1) if match else None
 
 
-def export_templates_root(env: dict[str, str] | None = None) -> Path:
-    env = env or os.environ
-
+def export_templates_root_from_env(env: dict[str, str]) -> Path:
     if sys.platform == "darwin":
         home = env.get("HOME")
         if home:
@@ -222,20 +220,53 @@ def export_templates_root(env: dict[str, str] | None = None) -> Path:
     return Path.home() / ".local" / "share" / "godot" / "export_templates"
 
 
+def export_templates_root() -> Path:
+    return export_templates_root_from_env(os.environ)
+
+
 def inspect_web_export_templates(godot_bin: str, env: dict[str, str] | None = None) -> tuple[bool, str]:
     version = detect_godot_version(godot_bin)
     if not version:
         return False, "unknown (could not determine the Godot version for export template lookup)"
 
-    template_dir = export_templates_root(env) / version
+    template_dir = export_templates_root_from_env(env or os.environ) / version
     required = ("web_release.zip", "web_nothreads_release.zip")
     missing = [name for name in required if not (template_dir / name).exists()]
     if missing:
         return (
             False,
             f"missing in {template_dir} (required: {', '.join(missing)})",
-        )
+    )
     return True, f"ready in {template_dir}"
+
+
+def bootstrap_export_templates(godot_bin: str, env: dict[str, str]) -> None:
+    version = detect_godot_version(godot_bin)
+    if not version:
+        print("bootstrap_export_templates: could not detect Godot version, skipping")
+        return
+
+    global_dir = export_templates_root() / version
+    local_dir = export_templates_root_from_env(env) / version
+
+    required = ["web_release.zip", "web_nothreads_release.zip"]
+
+    missing_locally = [filename for filename in required if not (local_dir / filename).exists()]
+    if not missing_locally:
+        return
+
+    missing_globally = [filename for filename in missing_locally if not (global_dir / filename).exists()]
+    if missing_globally:
+        print(
+            f"Export templates not found locally or globally for {version}.\n"
+            "Install Godot export templates before publishing."
+        )
+        return
+
+    local_dir.mkdir(parents=True, exist_ok=True)
+    for filename in missing_locally:
+        shutil.copy2(global_dir / filename, local_dir / filename)
+    print(f"Bootstrapped export templates into project-local .home ({len(missing_locally)} file(s) copied)")
 
 
 def print_doctor() -> None:
@@ -389,6 +420,7 @@ def require_publish_key(config: dict[str, str]) -> Path:
 def run_export_web() -> None:
     godot = detect_godot()
     env = ensure_local_home()
+    bootstrap_export_templates(godot, env)
     build_dir = PROJECT_ROOT / "build" / "web"
     build_dir.mkdir(parents=True, exist_ok=True)
     result = run(
