@@ -2,14 +2,14 @@
 
 ## Stage
 
-Architecture frozen. Generator/startup rollout and publish flow implemented. Production snapshot pushed. First live web deploy verified.
+Architecture frozen. Generator/startup rollout and publish flow implemented. Production snapshot pushed. Live student publish flow verified and hardened.
 
 ## Implementation Tracker
 
-- Current phase: Pilot readiness after first live deploy
-- Current focus: tighten generated export readiness and student meeting flow
-- Last completed milestone: first live website deploy for `pilot-test-1`
-- Ready for: student meeting + follow-up refinement
+- Current phase: Pilot readiness after publish hardening
+- Current focus: same-machine student onboarding and live-session execution
+- Last completed milestone: publish hardening after end-to-end smoke tests
+- Ready for: live student sessions on provisioned slots
 
 ## Summary
 
@@ -42,8 +42,16 @@ The repo currently has:
   - `/srv/git` and `/var/www/projects` prepared
   - `allow-one-repo-push` helper installed on the VM
   - split hostname plan prepared for web vs Git/SSH hosting
-- The production snapshot is pushed to GitHub and the first live student site is now verified at:
-  - `https://games.zurot.org/zyahav/pilot-test-1/`
+- The production snapshot and publish hardening follow-up are pushed to GitHub, including:
+  - `1d647df` — relative `ssh_key_path` resolution + doctor checks the project-local `.home` export-template path
+  - `8f1c093` — republish now force-pushes deploy-only `build/web` output so repeat publish works cleanly
+- Two provisioned student slots are now live and verified:
+  - `https://games.zurot.org/eden/game/`
+  - `https://games.zurot.org/ariel/game/`
+- The student package model is now project-local:
+  - `publish.toml` in project root
+  - deploy key in `keys/`
+  - `ssh_key_path = "keys/<student>_game_deploy"`
 
 ## Last Known Working Direction
 
@@ -58,7 +66,7 @@ The repo currently has:
 
 - Full automatic conversational TTS is still not solved; tonight's safe choice is manual short Kaya TTS plus the cleaned event-only notify hook
 - Publish failure output still exposes fairly raw Git stderr and should be cleaned up in a later refinement pass
-- Older generated projects created before the publish rollout may still be missing `export_presets.cfg`
+- Older generated projects created before the publish rollout may still be missing `export_presets.cfg` or older `publish.toml` key-path assumptions
 
 ## Verified Automation
 
@@ -106,10 +114,20 @@ The repo currently has:
   - `pilot-test-1` exported successfully after adding the Web preset file
   - deploy repo updated on `git.games.zurot.org`
   - public URL serves the real Godot export HTML
+- Publish smoke-test fixes are now verified:
+  - relative `ssh_key_path` values resolve to absolute paths before being stored in `core.sshCommand`
+  - `doctor` checks export templates in the same project-local `.home` path that `publish` uses
+  - republishing to an existing deploy slot now succeeds because deploy pushes use `--force`
+- Same-machine student isolation is verified:
+  - Eden and Ariel publish from separate generated project folders
+  - each project uses its own `keys/` folder
+  - both live URLs return `200`
 
 ## Resume Here
 
-1. Use `docs/TTS-INTEGRATION-NOTES.md` as the TTS source of truth for tonight
-2. Use the live `pilot-test-1` website for the student meeting if needed
+1. Use the project-local student package model for live sessions:
+   - `publish.toml` at project root
+   - deploy key under `keys/`
+2. Use `docs/TTS-INTEGRATION-NOTES.md` as the TTS source of truth for tonight
 3. Regenerate older projects from the updated platform when you want the full native publish flow
 4. Capture only concrete failures or confusion points from live use

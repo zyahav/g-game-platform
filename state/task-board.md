@@ -106,12 +106,20 @@
   - fresh generated project contains publish files and targets
   - `make publish-check` fails clearly on empty config
   - `make publish-status` reports readiness clearly
+- Harden the publish flow after end-to-end smoke testing:
+  - relative `ssh_key_path` values now resolve correctly for project-local `keys/`
+  - `doctor` now checks export templates in the project-local `.home` path used by publish
+  - republishing to an existing deploy slot now force-pushes deploy-only web artifacts
 - Prepare the Hetzner VM baseline for publish:
   - verified `nginx` and `git`
   - created `/srv/git`
   - created `/var/www/projects`
   - installed `allow-one-repo-push`
   - prepared the split-hostname web/Git hosting model
+- Provision and verify live student slots:
+  - `eden/game`
+  - `ariel/game`
+  - project-local `keys/` package model verified on the same machine
 - Ship the first production snapshot:
   - committed the startup/coaching/TTS/publish rollout as `348b19f`
   - included the approved publish specs and synced state docs
@@ -128,4 +136,3 @@
 - Refine at most three things from the first live session
 - Re-run verification after any follow-up fix
 - Design and implement `kaya.env` bootstrap so student onboarding requires zero terminal commands on any platform
-- Verify that relative `ssh_key_path` values work safely through the full publish flow including Git push from `build/web`
