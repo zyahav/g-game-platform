@@ -504,7 +504,7 @@ def run_publish() -> None:
 
     subprocess.run(["git", "-C", str(build_dir), "commit", "-m", "Deploy web build"], check=True)
     result = subprocess.run(
-        ["git", "-C", str(build_dir), "push", "deploy", "main"],
+        ["git", "-C", str(build_dir), "push", "--force", "deploy", "main"],
         text=True,
         capture_output=True,
         check=False,
