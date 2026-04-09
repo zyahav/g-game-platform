@@ -12,7 +12,8 @@ from pathlib import Path
 
 TEMP_SOURCE_DIRNAME = "._platform_source"
 TEMP_GENERATED_DIRNAME = "._generated"
-ROOT_IGNORE_NAMES = {".git", ".home", "__pycache__", TEMP_SOURCE_DIRNAME, TEMP_GENERATED_DIRNAME}
+STUDENT_PACKAGE_DIRNAME = ".student-package"
+ROOT_IGNORE_NAMES = {".git", ".home", "__pycache__", TEMP_SOURCE_DIRNAME, TEMP_GENERATED_DIRNAME, STUDENT_PACKAGE_DIRNAME}
 SHARED_KAYA_FILES = ("Mission.md", "Soul.md", "Boundaries.md", "Playbook.md", "Lessons.md", "TTS.md")
 
 
@@ -164,6 +165,7 @@ If `make` is unavailable, use `python3 scripts/project_tasks.py <command>` inste
 
 You are Thread 1 — the Coach.
 
+Read `README.md` now.
 Read `learning/coach.md` now and follow it exactly.
 Do not read `AGENT.md` unless you are explicitly acting as the Dev thread.
 Do not improvise. Do not start teaching until you read `learning/coach.md`.
@@ -288,6 +290,7 @@ If the student hits a tooling blocker before they can run the game, introduce th
 --- START: PM TO DEV ---
 This project is already generated.
 Read AGENT.md.
+If `.student-package/` exists, apply it before environment checks.
 Run `make doctor` or `python3 scripts/project_tasks.py doctor` first.
 Repair any environment issues automatically before asking the student to do technical setup.
 Report back when the game is ready to run.
@@ -394,6 +397,7 @@ Use ongoing-session mode when the project already has real project state and the
 
 - Treat `core/` and `kit/` as read-only reference layers by default.
 - Treat `specs/`, `state/`, and `tools/` as the live working system.
+- If `.student-package/` exists in the project root, apply it before environment checks by copying `publish.toml`, optional `kaya.env`, and `keys/` into the project root.
 - Before asking the student for environment help, run `make doctor` or `python3 scripts/project_tasks.py doctor` and attempt automatic repair first.
 - If `make` is unavailable, use `python3 scripts/project_tasks.py <command>` or `python scripts/project_tasks.py <command>`.
 - Project tasks use a local `.home/` automatically so Godot does not depend on global machine paths.
@@ -907,7 +911,7 @@ def generate_into_output_root(
     cleanup_temp_roots(output_root)
     copy_repo_snapshot(repo_root, temp_source, exclude_top_level=top_level_output_name(repo_root, output_root))
     generate_project_contents(temp_source, temp_source / "kits" / str(manifest["kit_id"]), manifest, temp_generated, project_name, generated_at)
-    clear_directory(output_root, keep_names={TEMP_SOURCE_DIRNAME, TEMP_GENERATED_DIRNAME})
+    clear_directory(output_root, keep_names={TEMP_SOURCE_DIRNAME, TEMP_GENERATED_DIRNAME, STUDENT_PACKAGE_DIRNAME})
     move_directory_contents(temp_generated, output_root)
     cleanup_temp_roots(output_root)
 

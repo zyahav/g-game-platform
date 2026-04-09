@@ -13,6 +13,32 @@ from pathlib import Path
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
+STUDENT_PACKAGE_ROOT = PROJECT_ROOT / ".student-package"
+
+
+def apply_student_package() -> None:
+    if not STUDENT_PACKAGE_ROOT.exists():
+        return
+
+    marker = STUDENT_PACKAGE_ROOT / ".applied"
+    if marker.exists():
+        return
+
+    package_publish = STUDENT_PACKAGE_ROOT / "publish.toml"
+    package_env = STUDENT_PACKAGE_ROOT / "kaya.env"
+    package_keys = STUDENT_PACKAGE_ROOT / "keys"
+
+    if package_publish.exists():
+        shutil.copy2(package_publish, PROJECT_ROOT / "publish.toml")
+    if package_env.exists():
+        shutil.copy2(package_env, PROJECT_ROOT / "kaya.env")
+    if package_keys.exists():
+        destination = PROJECT_ROOT / "keys"
+        if destination.exists():
+            shutil.rmtree(destination)
+        shutil.copytree(package_keys, destination)
+
+    marker.write_text("applied\n", encoding="utf-8")
 
 
 def bootstrap_kaya_env() -> None:
@@ -594,6 +620,7 @@ def run_publish_status() -> None:
 
 
 def main() -> None:
+    apply_student_package()
     bootstrap_kaya_env()
     args = parse_args()
     if args.command == "doctor":
