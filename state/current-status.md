@@ -57,6 +57,9 @@ The repo currently has:
 
 - Treat `docs/ARCHITECTURE.md` and `docs/DECISION-STARTUP-AND-LEARNING-LAYER.md` as frozen source-of-truth docs unless implementation or pilot exposes a contradiction
 - Use `docs/IMPLEMENTATION-PLAN-GENERATOR.md` as the execution plan for this rollout
+- Use Codex as the operator coordinator:
+  - the tutor/operator talks to Codex, not directly to Platform Dev and VM Dev in parallel
+  - Codex owns relay, sequencing, state tracking, and cross-role integration
 - Use the new generated-project `README.md` + `learning/coach.md` contract for Thread 1 in generated projects
 - Keep `core/` and `kit/` copied into generated projects as read-only reference layers
 - Treat `docs/IMPLEMENTATION-SPEC-PUBLISH.md` as the generated-project publish source of truth
