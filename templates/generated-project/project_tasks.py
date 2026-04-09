@@ -15,6 +15,21 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 
+def bootstrap_kaya_env() -> None:
+    env_path = PROJECT_ROOT / "kaya.env"
+    if not env_path.exists():
+        return
+    for line in env_path.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, value = line.partition("=")
+        key = key.strip()
+        value = value.strip()
+        if key and key not in os.environ:
+            os.environ[key] = value
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run generated-project tasks without depending on make.")
     parser.add_argument(
@@ -579,6 +594,7 @@ def run_publish_status() -> None:
 
 
 def main() -> None:
+    bootstrap_kaya_env()
     args = parse_args()
     if args.command == "doctor":
         print_doctor()

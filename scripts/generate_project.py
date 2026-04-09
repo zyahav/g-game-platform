@@ -420,6 +420,9 @@ Thumbs.db
 *.log
 .home/
 
+# Student session secrets — never commit
+kaya.env
+
 # Web export and deploy working copy
 build/
 """,
